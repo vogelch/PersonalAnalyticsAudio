@@ -1,0 +1,14 @@
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\BluetoothLowEnergyConnector.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\BluetoothLowEnergyConnector.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\System.Runtime.WindowsRuntime.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\Windows.winmd
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\WindowsBase.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\System.Security.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\System.Xaml.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\Accessibility.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\bin\Release\System.Runtime.WindowsRuntime.xml
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\obj\Release\BluetoothLowEnergyConnector.csprojAssemblyReference.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\obj\Release\BluetoothLowEnergyConnector.csproj.CoreCompileInputs.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\obj\Release\BluetoothLowEnergyConnector.csproj.CopyComplete
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\obj\Release\BluetoothLowEnergyConnector.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\BluetoothLowEnergyConnector\obj\Release\BluetoothLowEnergyConnector.pdb

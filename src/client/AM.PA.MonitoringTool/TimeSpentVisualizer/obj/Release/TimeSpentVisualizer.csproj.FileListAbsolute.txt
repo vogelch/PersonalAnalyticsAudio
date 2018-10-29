@@ -1,0 +1,16 @@
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\x64\SQLite.Interop.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\x86\SQLite.Interop.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\TimeSpentVisualizer.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\TimeSpentVisualizer.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\TimeSpentVisualizer.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\Shared.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\System.Data.SQLite.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\Shared.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\Shared.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\System.Data.SQLite.xml
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\bin\Release\System.Data.SQLite.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\obj\Release\TimeSpentVisualizer.csprojAssemblyReference.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\obj\Release\TimeSpentVisualizer.csproj.CoreCompileInputs.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\obj\Release\TimeSpentVisualizer.csproj.CopyComplete
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\obj\Release\TimeSpentVisualizer.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\TimeSpentVisualizer\obj\Release\TimeSpentVisualizer.pdb

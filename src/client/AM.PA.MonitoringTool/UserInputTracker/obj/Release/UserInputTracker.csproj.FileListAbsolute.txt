@@ -1,0 +1,17 @@
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\x64\SQLite.Interop.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\x86\SQLite.Interop.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\UserInputTracker.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\UserInputTracker.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\UserInputTracker.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\Gma.System.MouseKeyHook.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\Shared.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\System.Data.SQLite.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\Shared.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\Shared.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\System.Data.SQLite.xml
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\bin\Release\System.Data.SQLite.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\obj\Release\UserInputTracker.csprojAssemblyReference.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\obj\Release\UserInputTracker.csproj.CoreCompileInputs.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\obj\Release\UserInputTracker.csproj.CopyComplete
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\obj\Release\UserInputTracker.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\UserInputTracker\obj\Release\UserInputTracker.pdb

@@ -1,0 +1,16 @@
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\x64\SQLite.Interop.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\x86\SQLite.Interop.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\WindowsActivityTracker.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\WindowsActivityTracker.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\WindowsActivityTracker.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\Shared.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\System.Data.SQLite.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\Shared.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\Shared.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\System.Data.SQLite.xml
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\bin\Release\System.Data.SQLite.dll.config
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.csprojAssemblyReference.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.csproj.CoreCompileInputs.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.csproj.CopyComplete
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.pdb

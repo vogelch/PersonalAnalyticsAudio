@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="c:\program files (x86)\microsoft visual studio\2017\community\team tools\static analysis tools\fxcop\Xml\CodeAnalysisReport.xsl"?>
+<FxCopReport Version="15.0">
+ <Targets>
+  <Target Name="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Shared\bin\Debug\Shared.dll">
+   <Modules>
+    <Module Name="shared.dll">
+     <Namespaces>
+      <Namespace Name="Shared.Data">
+       <Types>
+        <Type Name="DatabaseImplementation" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#ExecuteDefaultQuery(System.String)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="SQL-Abfragen auf Sicherheitsrisiken überprüfen" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2018-10-26 14:31:01Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Shared\Data" File="DatabaseImplementation.cs" Line="68">Die in 'DatabaseImplementation.ExecuteDefaultQuery(string)' an 'SQLiteCommand.SQLiteCommand(string, SQLiteConnection)' übergebene Abfragezeichenfolge könnte die folgenden 'query'-Variablen enthalten. Wenn eine dieser Variablen aus Benutzereingaben stammt, sollten Sie eine gespeicherte Prozedur oder eine parametrisierte SQL-Abfrage verwenden, anstatt die Abfrage mit Zeichenfolgenverkettungen zu erstellen.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#ExecuteReadQuery(System.String)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="SQL-Abfragen auf Sicherheitsrisiken überprüfen" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2018-10-26 14:31:01Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Shared\Data" File="DatabaseImplementation.cs" Line="192">Die in 'DatabaseImplementation.ExecuteReadQuery(string)' an 'SQLiteCommand.SQLiteCommand(string, SQLiteConnection)' übergebene Abfragezeichenfolge könnte die folgenden 'query'-Variablen enthalten. Wenn eine dieser Variablen aus Benutzereingaben stammt, sollten Sie eine gespeicherte Prozedur oder eine parametrisierte SQL-Abfrage verwenden, anstatt die Abfrage mit Zeichenfolgenverkettungen zu erstellen.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#ExecuteScalar(System.String)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="SQL-Abfragen auf Sicherheitsrisiken überprüfen" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2018-10-26 14:31:01Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Shared\Data" File="DatabaseImplementation.cs" Line="97">Die in 'DatabaseImplementation.ExecuteScalar(string)' an 'SQLiteCommand.SQLiteCommand(string, SQLiteConnection)' übergebene Abfragezeichenfolge könnte die folgenden 'query'-Variablen enthalten. Wenn eine dieser Variablen aus Benutzereingaben stammt, sollten Sie eine gespeicherte Prozedur oder eine parametrisierte SQL-Abfrage verwenden, anstatt die Abfrage mit Zeichenfolgenverkettungen zu erstellen.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#ExecuteScalar2(System.String)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="SQL-Abfragen auf Sicherheitsrisiken überprüfen" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2018-10-26 14:31:01Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Shared\Data" File="DatabaseImplementation.cs" Line="123">Die in 'DatabaseImplementation.ExecuteScalar2(string)' an 'SQLiteCommand.SQLiteCommand(string, SQLiteConnection)' übergebene Abfragezeichenfolge könnte die folgenden 'query'-Variablen enthalten. Wenn eine dieser Variablen aus Benutzereingaben stammt, sollten Sie eine gespeicherte Prozedur oder eine parametrisierte SQL-Abfrage verwenden, anstatt die Abfrage mit Zeichenfolgenverkettungen zu erstellen.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#ExecuteScalar3(System.String)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="SQL-Abfragen auf Sicherheitsrisiken überprüfen" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2018-10-26 14:31:01Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Shared\Data" File="DatabaseImplementation.cs" Line="138">Die in 'DatabaseImplementation.ExecuteScalar3(string)' an 'SQLiteCommand.SQLiteCommand(string, SQLiteConnection)' übergebene Abfragezeichenfolge könnte die folgenden 'query'-Variablen enthalten. Wenn eine dieser Variablen aus Benutzereingaben stammt, sollten Sie eine gespeicherte Prozedur oder eine parametrisierte SQL-Abfrage verwenden, anstatt die Abfrage mit Zeichenfolgenverkettungen zu erstellen.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#GetUserWorkEnd(System.DateTimeOffset)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="SQL-Abfragen auf Sicherheitsrisiken überprüfen" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2018-10-26 14:31:01Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Shared\Data" File="DatabaseImplementation.cs" Line="420">Die in 'DatabaseImplementation.GetUserWorkEnd(DateTimeOffset)' an 'SQLiteCommand.SQLiteCommand(string, SQLiteConnection)' übergebene Abfragezeichenfolge könnte die folgenden 'new string[5][1]'-Variablen enthalten. Wenn eine dieser Variablen aus Benutzereingaben stammt, sollten Sie eine gespeicherte Prozedur oder eine parametrisierte SQL-Abfrage verwenden, anstatt die Abfrage mit Zeichenfolgenverkettungen zu erstellen.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#GetUserWorkStart(System.DateTimeOffset)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="SQL-Abfragen auf Sicherheitsrisiken überprüfen" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2018-10-26 14:31:01Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Shared\Data" File="DatabaseImplementation.cs" Line="394">Die in 'DatabaseImplementation.GetUserWorkStart(DateTimeOffset)' an 'SQLiteCommand.SQLiteCommand(string, SQLiteConnection)' übergebene Abfragezeichenfolge könnte die folgenden 'new string[5][1]'-Variablen enthalten. Wenn eine dieser Variablen aus Benutzereingaben stammt, sollten Sie eine gespeicherte Prozedur oder eine parametrisierte SQL-Abfrage verwenden, anstatt die Abfrage mit Zeichenfolgenverkettungen zu erstellen.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+     </Namespaces>
+    </Module>
+   </Modules>
+  </Target>
+ </Targets>
+ <Rules>
+  <Rule TypeName="SQL-Abfragen auf Sicherheitsrisiken überprüfen" Category="Microsoft.Security" CheckId="CA2100">
+   <Name>SQL-Abfragen auf Sicherheitsrisiken überprüfen</Name>
+   <Description>Eine SQL-Befehlszeichenfolge, die aus Benutzereingaben erstellt wird, ist anfällig für Angriffe durch Einschleusung von SQL-Befehlen. Microsoft SQL Server und andere Datenbankserver unterstützen gespeicherte Prozeduren und parametrisierte SQL-Abfragen, durch die das Risiko von Angriffen durch Einschleusung von Befehlen reduziert wird.</Description>
+   <Resolution Name="WithNonLiterals">Die in {1} an {0} übergebene Abfragezeichenfolge könnte die folgenden {2}-Variablen enthalten. Wenn eine dieser Variablen aus Benutzereingaben stammt, sollten Sie eine gespeicherte Prozedur oder eine parametrisierte SQL-Abfrage verwenden, anstatt die Abfrage mit Zeichenfolgenverkettungen zu erstellen.</Resolution>
+   <Owner>RuleOwner</Owner>
+   <Url>http://msdn.microsoft.com/library/ms182310.aspx</Url>
+   <Email />
+   <MessageLevel Certainty="75">Warning</MessageLevel>
+   <File Name="dataflowrules.dll" Version="15.0.0.0" />
+  </Rule>
+ </Rules>
+ <Localized>
+  <String Key="Category">Kategorie</String>
+  <String Key="Certainty">Sicherheit</String>
+  <String Key="CollapseAll">Alle zuklappen</String>
+  <String Key="CheckId">Prüf-ID</String>
+  <String Key="Error">Fehler</String>
+  <String Key="Errors">Fehler</String>
+  <String Key="ExpandAll">Alle aufklappen</String>
+  <String Key="Help">Hilfe</String>
+  <String Key="Line">Zeile</String>
+  <String Key="Messages">Meldung(en)</String>
+  <String Key="LocationNotStoredInPdb">[Nicht in PDB gespeicherter Speicherort]</String>
+  <String Key="Project">Projekt</String>
+  <String Key="Resolution">Auflösung</String>
+  <String Key="Rule">Regel</String>
+  <String Key="RuleFile">Regeldatei</String>
+  <String Key="RuleDescription">Regelbeschreibung</String>
+  <String Key="Source">Quelle</String>
+  <String Key="Status">Status</String>
+  <String Key="Target">Ziel</String>
+  <String Key="Warning">Warnung</String>
+  <String Key="Warnings">Warnung(en)</String>
+  <String Key="ReportTitle">Codeanalysebericht</String>
+ </Localized>
+</FxCopReport>
