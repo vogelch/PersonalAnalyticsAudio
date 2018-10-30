@@ -36,10 +36,8 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\AudioTracker.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\EntityFramework.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\EntityFramework.SqlServer.dll
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\FitbitTracker.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Hardcodet.Wpf.TaskbarNotification.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\MsOfficeTracker.dll
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\PolarTracker.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Retrospection.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Shared.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\System.Data.SQLite.dll
@@ -51,17 +49,12 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\WindowsActivityTracker.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\NAudio.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Newtonsoft.Json.dll
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Windows.winmd
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\BluetoothLowEnergyConnector.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Microsoft.Graph.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Microsoft.Identity.Client.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Microsoft.Graph.Core.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Gma.System.MouseKeyHook.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\AudioTracker.pdb
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\AudioTracker.dll.config
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\FitbitTracker.pdb
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\FitbitTracker.dll.config
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\PolarTracker.pdb
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\TimeSpentVisualizer.pdb
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\TimeSpentVisualizer.dll.config
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\MsOfficeTracker.pdb
@@ -83,7 +76,6 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\System.Data.SQLite.dll.config
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\NAudio.xml
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Newtonsoft.Json.xml
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\BluetoothLowEnergyConnector.pdb
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Microsoft.Graph.xml
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Microsoft.Identity.Client.xml
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Microsoft.Graph.Core.xml

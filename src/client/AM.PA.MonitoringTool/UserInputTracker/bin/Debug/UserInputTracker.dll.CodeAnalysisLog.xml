@@ -12,7 +12,7 @@
          <Members>
           <Member Name="#Keystroke" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2018-10-26 14:31:12Z" FixCategory="Breaking">
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2018-10-29 23:22:29Z" FixCategory="Breaking">
              <Issue Name="First" Certainty="95" Level="Error">Deklarieren Sie den ersten Parameter von "'Daemon.KeystrokeEventHandler'" als Objekt mit dem Namen "sender".</Issue>
              <Issue Name="Second" Certainty="95" Level="Error">Deklarieren Sie den zweiten Parameter von "'Daemon.KeystrokeEventHandler'" als EventArgs oder als Instanz eines Typs, durch den EventArgs erweitert wird, mit dem Namen "e".</Issue>
             </Message>
@@ -20,7 +20,7 @@
           </Member>
           <Member Name="#MouseClick" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2018-10-26 14:31:12Z" FixCategory="Breaking">
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2018-10-29 23:22:29Z" FixCategory="Breaking">
              <Issue Name="First" Certainty="95" Level="Error">Deklarieren Sie den ersten Parameter von "'Daemon.MouseClickEventHandler'" als Objekt mit dem Namen "sender".</Issue>
              <Issue Name="Second" Certainty="95" Level="Error">Deklarieren Sie den zweiten Parameter von "'Daemon.MouseClickEventHandler'" als EventArgs oder als Instanz eines Typs, durch den EventArgs erweitert wird, mit dem Namen "e".</Issue>
             </Message>
@@ -28,7 +28,7 @@
           </Member>
           <Member Name="#MouseMovement" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2018-10-26 14:31:12Z" FixCategory="Breaking">
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2018-10-29 23:22:29Z" FixCategory="Breaking">
              <Issue Name="First" Certainty="95" Level="Error">Deklarieren Sie den ersten Parameter von "'Daemon.MouseMovementEventHandler'" als Objekt mit dem Namen "sender".</Issue>
              <Issue Name="Second" Certainty="95" Level="Error">Deklarieren Sie den zweiten Parameter von "'Daemon.MouseMovementEventHandler'" als EventArgs oder als Instanz eines Typs, durch den EventArgs erweitert wird, mit dem Namen "e".</Issue>
             </Message>
@@ -36,7 +36,7 @@
           </Member>
           <Member Name="#MouseScrolling" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2018-10-26 14:31:12Z" FixCategory="Breaking">
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2018-10-29 23:22:29Z" FixCategory="Breaking">
              <Issue Name="First" Certainty="95" Level="Error">Deklarieren Sie den ersten Parameter von "'Daemon.MouseScrollingEventHandler'" als Objekt mit dem Namen "sender".</Issue>
              <Issue Name="Second" Certainty="95" Level="Error">Deklarieren Sie den zweiten Parameter von "'Daemon.MouseScrollingEventHandler'" als EventArgs oder als Instanz eines Typs, durch den EventArgs erweitert wird, mit dem Namen "e".</Issue>
             </Message>

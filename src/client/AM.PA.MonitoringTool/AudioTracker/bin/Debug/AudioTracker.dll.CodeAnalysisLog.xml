@@ -12,8 +12,8 @@
          <Members>
           <Member Name="#waveSource_DataAvailable(System.Object,NAudio.Wave.WaveInEventArgs)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
            <Messages>
-            <Message TypeName="Objekte nicht mehrmals verwerfen" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2018-10-29 12:56:37Z" FixCategory="DependsOnFix">
-             <Issue Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker" File="Daemon.cs" Line="175">Das Objekt "'waveFile'" kann mehrere Male in der 'Daemon.waveSource_DataAvailable(object, WaveInEventArgs)'-Methode verworfen werden. Um zu verhindern, dass eine System.ObjectDisposedException generiert wird, sollten Sie die Dispose-Methode nur einmal für ein Objekt aufrufen.: Lines: 175</Issue>
+            <Message TypeName="Objekte nicht mehrmals verwerfen" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2018-10-29 23:22:31Z" FixCategory="DependsOnFix">
+             <Issue Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker" File="Daemon.cs" Line="176">Das Objekt "'waveFile'" kann mehrere Male in der 'Daemon.waveSource_DataAvailable(object, WaveInEventArgs)'-Methode verworfen werden. Um zu verhindern, dass eine System.ObjectDisposedException generiert wird, sollten Sie die Dispose-Methode nur einmal für ein Objekt aufrufen.: Lines: 176</Issue>
             </Message>
            </Messages>
           </Member>
@@ -30,7 +30,7 @@
   <Rule TypeName="Objekte nicht mehrmals verwerfen" Category="Microsoft.Usage" CheckId="CA2202">
    <Name>Objekte nicht mehrmals verwerfen</Name>
    <Description>Eine ordnungsgemäß implementierte Dispose-Methode kann mehrere Male aufgerufen werden, ohne dass eine Ausnahme ausgelöst wird. Dies ist jedoch nicht garantiert. Um zu verhindern, dass eine System.ObjectDisposedException generiert wird, sollten Sie die Dispose-Methode nur einmal für ein Objekt aufrufen.</Description>
-   <Resolution Name="Default">Das Objekt "{0}" kann mehrere Male in der {1}-Methode verworfen werden. Um zu verhindern, dass eine System.ObjectDisposedException generiert wird, sollten Sie die Dispose-Methode nur einmal für ein Objekt aufrufen.: Lines: 175</Resolution>
+   <Resolution Name="Default">Das Objekt "{0}" kann mehrere Male in der {1}-Methode verworfen werden. Um zu verhindern, dass eine System.ObjectDisposedException generiert wird, sollten Sie die Dispose-Methode nur einmal für ein Objekt aufrufen.: Lines: 176</Resolution>
    <Owner>RuleOwner</Owner>
    <Url>http://msdn.microsoft.com/library/ms182334.aspx</Url>
    <Email />

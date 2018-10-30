@@ -270,14 +270,6 @@
       <Project>{d9a60f6b-7ce2-4926-a282-77f207df2bfe}</Project>
       <Name>AudioTracker</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FitbitTracker\FitbitTracker.csproj">
-      <Project>{d7752ed4-6dd5-4953-8b5f-bbce24136d1c}</Project>
-      <Name>FitbitTracker</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PolarTracker\PolarTracker.csproj">
-      <Project>{c42cc860-6372-469f-a52b-5d675f2650d6}</Project>
-      <Name>PolarTracker</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TimeSpentVisualizer\TimeSpentVisualizer.csproj">
       <Project>{8eba3b95-be0e-4498-9eac-20d417176a00}</Project>
       <Name>TimeSpentVisualizer</Name>

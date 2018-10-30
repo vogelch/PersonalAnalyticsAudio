@@ -47,7 +47,6 @@ namespace AudioTracker
 
         // audio device and recording
         public static MMDevice inputAudioDevice { get; set; } //TODO: look into access modifier
-        public static int inputAudioDeviceNumber;
         private static WaveIn waveSource = null;
         private static int recordingSampleRate = 16000;
         private static int recordingChannels = 1;
@@ -135,20 +134,23 @@ namespace AudioTracker
                 WriteResourceToFile("AudioTracker.Resources.LIUM.LIUM_SpkDiarization-8.4.1.jar", "lium.jar");
 
                 // Start Audio recording
-                try
+                if (Settings.IS_RAW_RECORDING_ENABLED)
                 {
                     waveSource = new WaveIn(WaveCallbackInfo.FunctionCallback());
-                    waveSource.DeviceNumber = 0; //= inputAudioDeviceNumber;
+                    waveSource.DeviceNumber = 0; // inputAudioDevice. // InputDeviceIndex
                     waveSource.WaveFormat = new WaveFormat(recordingSampleRate, recordingChannels);
                     waveSource.BufferMilliseconds = 30000; // TODO: get this number from settings
                     waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
                     waveSource.RecordingStopped += new EventHandler<StoppedEventArgs>(waveSource_RecordingStopped);
-                    waveSource.StartRecording();
-                    Logger.WriteToConsole("Audio recording has started.");
-                }
-                catch (Exception e)
-                {
-                    Logger.WriteToLogFile(e);
+                    try
+                    {
+                        waveSource.StartRecording();
+                        Logger.WriteToConsole("Audio recording has started.");
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.WriteToLogFile(e);
+                    }
                 }
 
                 IsRunning = true;
@@ -161,7 +163,6 @@ namespace AudioTracker
                 IsRunning = false;
             }
         }
-        //TODO: what happens if the microphone is removed during recording?
 
         void waveSource_DataAvailable(object sender, WaveInEventArgs e)
         {
@@ -326,8 +327,6 @@ namespace AudioTracker
             RegistryKey subKey = rk.OpenSubKey("SOFTWARE\\JavaSoft\\Java Runtime Environment");
             string currentVerion = subKey.GetValue("CurrentVersion").ToString();
             Logger.WriteToConsole("Java version: " + currentVerion);
-            var msg = new Exception("Java version: " + currentVerion);
-            Logger.WriteToLogFile(msg);
 
             bool isAvailable = false;
             List<String> output = new List<string>();
@@ -506,7 +505,7 @@ namespace AudioTracker
         {
             //runJarFile("test.wav", "test.seg");
             //Logger.WriteToConsole("LIUM result: " + result);
-            string arguments = "-Xmx2024m -jar lium.jar --fInputMask=\"" + liumInputFilename + "\" --sOutputMask=\"" + liumOutputFilename + "\" --saveAllStep --doCEClustering showName";
+            string arguments = "-Xmx2024m -jar lium.jar --fInputMask=\"" + liumInputFilename + "\" --sOutputMask=\"" + liumOutputFilename + "\" --doCEClustering showName";
             //string arguments = "-Xmx2024m -jar lium.jar";
 
             var worker = new BackgroundWorker();
@@ -629,16 +628,6 @@ namespace AudioTracker
                     }
                     */
 
-                    parseSegFile(liumOutputFilename);
-
-                    //TODO: delete unused LIUM files
-
-                    if (!Settings.IS_RAW_RECORDING_ENABLED)
-                    {
-                        //TODO: delete recordings
-                    }
-
-
                 }
                 catch (Exception ex)
                 {
@@ -665,107 +654,7 @@ namespace AudioTracker
             //Helpers.ProcessAsyncHelper.ProcessResult result = task.Result;
             //Logger.WriteToConsole("LIUM output: " + result.Output);
             */
-        }
 
-        public void parseSegFile(string fileName)
-        {
-            //TODO: create classes for segments and clusters
-            StreamReader reader = File.OpenText(fileName);
-            string line;
-            int lineCounter = 0;
-            int numberOfClusters = 0;
-            while ((line = reader.ReadLine()) != null)
-            {
-                lineCounter++;
-                if (line == "")
-                {
-                    // seg file is empty
-                    Logger.WriteToConsole("Segfile is empty.");
-                    //TODO: handle this: write corresponding entry to database
-                }
-                else if (line.StartsWith(";;"))
-                {
-                    // line contains cluster information
-                    numberOfClusters++;
-                    string[] clusterData = line.Split(' ');
-                    string clusterID = clusterData[2];
-                    double scoreFS = double.Parse(clusterData[6], CultureInfo.InvariantCulture);
-                    double scoreFT = double.Parse(clusterData[11], CultureInfo.InvariantCulture);
-                    double scoreMS = double.Parse(clusterData[16], CultureInfo.InvariantCulture);
-                    double scoreMT = double.Parse(clusterData[21], CultureInfo.InvariantCulture);
-                    //TODO: write cluster information into database
-                }
-                else
-                {
-                    // line contains segment data
-                    string[] segmentData = line.Split(' ');
-                    int channelNumber = int.Parse(segmentData[1]);
-                    int startOfSegmentInFeature = int.Parse(segmentData[2]);
-                    int lengthOfSegmentInFeatures = int.Parse(segmentData[3]);
-                    string speakerGender = null;
-                    if (segmentData[4] == "U")
-                    {
-                        speakerGender = "unknown";
-                        //TODO: create enumeration
-                    }
-                    else if (segmentData[4] == "F")
-                    {
-                        speakerGender = "female";
-                    }
-                    else if (segmentData[4] == "M")
-                    {
-                        speakerGender = "male";
-                    }
-                    else
-                    {
-                        //TODO: error, this should not happen (possibly corrupt seg file)
-                    }
-                    string typeOfBand = null;
-                    if (segmentData[5] == "T")
-                    {
-                        typeOfBand = "telephone";
-                        //TODO: create enumeration
-                    }
-                    else if (segmentData[5] == "S")
-                    {
-                        typeOfBand = "studio";
-                    }
-                    else if (segmentData[5] == "U")
-                    {
-                        typeOfBand = "unknown";
-                    }
-                    else
-                    {
-                        //TODO: error, this should not happen (possibly corrupt seg file)
-                    }
-                    string typeOfEnvironment = null;
-                    if (segmentData[6] == "U")
-                    {
-                        typeOfEnvironment = "unknown";
-                        //TODO: create enumeration
-                    }
-                    else if (segmentData[6] == "P")
-                    {
-                        typeOfEnvironment = "speech";
-                    }
-                    else if (segmentData[6] == "M")
-                    {
-                        typeOfEnvironment = "music";
-                    }
-                    else if (segmentData[6] == "S")
-                    {
-                        typeOfEnvironment = "silence";
-                    }
-                    else
-                    {
-                        //TODO: error, this should not happen (possibly corrupt seg file)
-                    }
-                    string speakerLabel = segmentData[7];
-                }
-
-            }
-            Logger.WriteToConsole("Number of lines read from seg file: " + lineCounter);
-            Logger.WriteToConsole("Number of clusters read from seg file: " + numberOfClusters);
         }
 
         /*
