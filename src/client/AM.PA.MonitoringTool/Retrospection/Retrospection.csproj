@@ -152,6 +152,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AudioTracker\AudioTracker.csproj">
+      <Project>{d9a60f6b-7ce2-4926-a282-77f207df2bfe}</Project>
+      <Name>AudioTracker</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{2bbdfa6d-20dd-4a7b-893e-43c388382c9a}</Project>
       <Name>Shared</Name>

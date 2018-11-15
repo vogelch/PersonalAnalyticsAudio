@@ -21,6 +21,7 @@ using System.Linq;
 using AudioTracker.Views;
 using NAudio.Wave;
 using NAudio.CoreAudioApi;
+using NAudio.Lame;
 using System.IO;
 using System.ComponentModel;
 using System.Threading;
@@ -136,14 +137,33 @@ namespace AudioTracker
                 // Start Audio recording
                 if (Settings.IS_RAW_RECORDING_ENABLED)
                 {
+                    // assign selected audio input device
+                    /*
+                    int waveInDevices = WaveIn.DeviceCount;
+                    for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
+                    {
+                        WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(waveInDevice);
+                        Logger.WriteToConsole("Device " + waveInDevice + ": " + deviceInfo.ProductName + ", " + deviceInfo.Channels + " channels, ID: " + deviceInfo.ProductGuid);
+                        if (deviceInfo.ProductName == Settings.inputAudioDeviceName)
+                        {
+                            Settings.inputAudioDeviceNumber = waveInDevice;
+                        }
+                        else
+                        {
+                            Logger.WriteToConsole(deviceInfo.ProductName + " is not equal to " + Settings.inputAudioDeviceName);
+                        }
+                    }
+                    */
+
                     waveSource = new WaveIn(WaveCallbackInfo.FunctionCallback());
-                    waveSource.DeviceNumber = 0; // inputAudioDevice. // InputDeviceIndex
-                    waveSource.WaveFormat = new WaveFormat(recordingSampleRate, recordingChannels);
-                    waveSource.BufferMilliseconds = 30000; // TODO: get this number from settings
-                    waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
-                    waveSource.RecordingStopped += new EventHandler<StoppedEventArgs>(waveSource_RecordingStopped);
                     try
                     {
+                        waveSource.DeviceNumber = Settings.inputAudioDeviceNumber;
+                        Logger.WriteToConsole("Selected audio input device number: " + Settings.inputAudioDeviceNumber);
+                        waveSource.WaveFormat = new WaveFormat(recordingSampleRate, recordingChannels);
+                        waveSource.BufferMilliseconds = 30000; // TODO: get this number from settings
+                        waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
+                        waveSource.RecordingStopped += new EventHandler<StoppedEventArgs>(waveSource_RecordingStopped);
                         waveSource.StartRecording();
                         Logger.WriteToConsole("Audio recording has started.");
                     }
@@ -175,6 +195,10 @@ namespace AudioTracker
             waveFile.Close();
             waveFile.Dispose();
             waveFile = null;
+
+            //save as MP3 file
+            string audioFilenameMp3 = Shared.Settings.ExportFilePath + "\\" + recordingFilePrefix + "-" + fileNameDateTime + ".mp3";
+            ConvertWavToMp3(audioFilename, audioFilenameMp3);
 
             // start analysis of new audio chunk
             string outputFilename = Shared.Settings.ExportFilePath + "\\" + "lium-" + fileNameDateTime + ".seg";
@@ -639,6 +663,15 @@ namespace AudioTracker
             void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
             {
                 Logger.WriteToConsole("Worker completed.");
+
+                if (File.Exists(@liumInputFilename))
+                {
+                    File.Delete(@liumInputFilename);
+                }
+                else
+                {
+                    //TODO: write to error log
+                }
             }
 
             /*
@@ -655,6 +688,29 @@ namespace AudioTracker
             //Logger.WriteToConsole("LIUM output: " + result.Output);
             */
 
+        }
+
+        private static void ConvertWavToMp3(string WavFile, string Mp3FileName)
+        {
+            using (var resultMemoryStream = new MemoryStream())
+            using (var reader = new WaveFileReader(WavFile))
+            using (var writer = new LameMP3FileWriter(Mp3FileName, reader.WaveFormat, 16/*LAMEPreset.VBR_90*/))
+            {
+                reader.CopyTo(writer);
+            }
+        }
+
+        // Audio input devices
+        public static List<string> GetAudioInputDevices()
+        {
+            var deviceList = new List<string>();
+            int waveInDevices = WaveIn.DeviceCount;
+            for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
+            {
+                string deviceProductName = WaveIn.GetCapabilities(waveInDevice).ProductName;
+                deviceList.Add(deviceProductName);
+            }
+            return deviceList;
         }
 
         /*

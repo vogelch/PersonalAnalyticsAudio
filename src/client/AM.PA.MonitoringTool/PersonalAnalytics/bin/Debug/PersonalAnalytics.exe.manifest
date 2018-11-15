@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="27028480">
-      <assemblyIdentity name="AudioTracker" version="0.9.6877.674" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="27030016">
+      <assemblyIdentity name="AudioTracker" version="0.9.6893.21949" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>2gbmIN89QHekIpNZyNBE4iTtFNT8S3rloZ1nNjgZZis=</dsig:DigestValue>
+        <dsig:DigestValue>5TC5uRTBgiI7cnfqASUIgrKo9sWgBYgwDqYhg9o3Dtg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -140,13 +140,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MsOfficeTracker.dll" size="57856">
-      <assemblyIdentity name="MsOfficeTracker" version="1.0.6877.677" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="MsOfficeTracker" version="1.0.6893.15557" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>VJlR5DneL+cWEQlwUPzbT5d5uuWf5fegZohBjKe9Nsg=</dsig:DigestValue>
+        <dsig:DigestValue>0qzqnbP9KL5MyePJ3zB6g4VGMc4FeDEItwaUGc8XA3k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -163,14 +163,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Newtonsoft.Json.dll" size="526336">
-      <assemblyIdentity name="Newtonsoft.Json" version="9.0.0.0" publicKeyToken="30AD4FE6B2A6AEED" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NAudio.Lame.dll" size="74752">
+      <assemblyIdentity name="NAudio.Lame" version="1.0.5.22475" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>V14w+Y5OpCyeUW7ci7sprYtQsXOj5rNrW6OeEzzOlAY=</dsig:DigestValue>
+        <dsig:DigestValue>UagOCgLP4Eu2NvRX5XUJ9WcCGfGQEU2qMgDDiaTkZ7Q=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Newtonsoft.Json.dll" size="662528">
+      <assemblyIdentity name="Newtonsoft.Json" version="11.0.0.0" publicKeyToken="30AD4FE6B2A6AEED" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>9Yw3T/yq5ONtdA2Q+/f+cNCrtzKM2a86CntwgD6ZS6Q=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -182,31 +194,31 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>79zZaX/NQKuYK0Zm6vFm+xtlwoTmerAzrDYoa+EAMzw=</dsig:DigestValue>
+        <dsig:DigestValue>GrCHAzY3qUNtiwQP8SScrNOXViGGhQ0YIpefZEZlsWY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Retrospection.dll" size="667136">
-      <assemblyIdentity name="Retrospection" version="1.0.6877.674" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Retrospection.dll" size="668160">
+      <assemblyIdentity name="Retrospection" version="1.0.6893.21952" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>bEpOCvsKMUDwzHVkSw05+pESGEHzzYQZ9ZtUIpaa3C4=</dsig:DigestValue>
+        <dsig:DigestValue>4RrOypJQwfKPzRlwSXLZGAQ1A+fTS87G61g05tupuiI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Shared.dll" size="51712">
-      <assemblyIdentity name="Shared" version="2.0.6877.666" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="Shared" version="2.0.6893.15552" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>59FTvbiCzwnrtcJAMAO48+LurKDRCnGOK4Vqal/DBLg=</dsig:DigestValue>
+        <dsig:DigestValue>V14KdBSK3hUju+M48pmC38wpacw7oiVQViOwGmWgwr4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -248,49 +260,49 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="TimeSpentVisualizer.dll" size="18944">
-      <assemblyIdentity name="TimeSpentVisualizer" version="1.0.6877.673" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="TimeSpentVisualizer" version="1.0.6893.15556" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>u6xg6fwn+dRwjT8sujw628XoHkzLSBI4l/Gs659jtMk=</dsig:DigestValue>
+        <dsig:DigestValue>WxFztZZLggbJwLNpTgcbgsaKYtumC0OeLXsunDqh3Nc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="UserEfficiencyTracker.dll" size="52736">
-      <assemblyIdentity name="UserEfficiencyTracker" version="2.0.6877.674" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="UserEfficiencyTracker" version="2.0.6893.15557" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>YV1DMaRCNGvFB8di9cIGiR9dlqUWM2Q7FUaVZndqVCQ=</dsig:DigestValue>
+        <dsig:DigestValue>93SEU3Wkx//tC74rG6tRIlW2IJp9DRO9naD1uv/Bj0k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="UserInputTracker.dll" size="38400">
-      <assemblyIdentity name="UserInputTracker" version="2.0.6877.673" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="UserInputTracker" version="2.0.6893.15556" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>VBQEpSc1+Bj8pkPkUG4s38bQsfXgScn1XP+aI6adzBc=</dsig:DigestValue>
+        <dsig:DigestValue>8q1k2KzPcXR4T8EeSr91teiZ3r8pSToZAu8U2sv2ta8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="WindowsActivityTracker.dll" size="71168">
-      <assemblyIdentity name="WindowsActivityTracker" version="3.0.6877.670" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="WindowsActivityTracker" version="3.0.6893.15554" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>OP746TIAIfM26ZXblDDqQ6ZoEO7PsFWiASD49TTfVFw=</dsig:DigestValue>
+        <dsig:DigestValue>+keU+s0cvVyAQKRUlYM0pJR+1abx/fucfLdEzXbC6kw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -312,13 +324,13 @@
       <dsig:DigestValue>5gwmvlJugcGHHHLUckefE9g8xXMSxJVuvfKbnkUmSag=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="PersonalAnalytics.exe.config" size="3437">
+  <file name="PersonalAnalytics.exe.config" size="3499">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>LXOvDLFr9SDokHGwdOAKXJh7XqS8aNFb68PUS6NwR+I=</dsig:DigestValue>
+      <dsig:DigestValue>+THeuOb8V8Utxh+A9rBQ9W6w2wWuRbncqBG/sSuVG4k=</dsig:DigestValue>
     </hash>
   </file>
   <file name="x64\SQLite.Interop.dll" size="1469952">

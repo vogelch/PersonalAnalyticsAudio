@@ -93,14 +93,14 @@ namespace Shared.Data
         /// <returns></returns>
         private static string GetDatabaseSavePath(string exportPath)
         {
-            return Path.Combine(exportPath, "pa.dat"); // New file name since 20.10.15
+            return Path.Combine(exportPath, Settings.DatabaseFilename); // New file name since 20.10.15
             //var dbPath = string.Format(CultureInfo.InvariantCulture,"{0}pa_{1}.dat", exportPath, DateTime.Now.Year); // New file name since 07.04.15
             //var dbPath = string.Format(CultureInfo.InvariantCulture,"{0}pa_{1}_{2}.dat", exportPath, DateTime.Now.Year, Helpers.GetIso8601WeekOfYear(DateTime.Now));
         }
 
         private static string GetSettingsSavePath(string exportPath)
         {
-            return Path.Combine(exportPath, "pa.dat"); // current version: also store settings in normal file
+            return Path.Combine(exportPath, Settings.DatabaseFilename); // current version: also store settings in normal file
             //return Path.Combine(exportPath, "pa_settings.dat");
         }
     }

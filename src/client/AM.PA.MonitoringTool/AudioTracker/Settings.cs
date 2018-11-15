@@ -18,6 +18,8 @@ namespace AudioTracker
         internal const int SAVE_TO_DATABASE_INTERVAL = 30 * 1000;
 
         internal static string AudioDevice;
+        internal static int inputAudioDeviceNumber = 0;
+        public static string inputAudioDeviceName; //TODO: look into access modifier
         internal static int Channels = 2;
         internal static int SampleRate = 44100; // in kHz
         //TODO: recording setting

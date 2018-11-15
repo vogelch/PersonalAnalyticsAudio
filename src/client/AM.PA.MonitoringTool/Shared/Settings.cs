@@ -62,6 +62,8 @@ namespace Shared
 
         public static string ExportFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PersonalAnalytics");
         //public static string RemoteFolderName = "remote\\";
+        public static string DatabaseFilename = "pa_audio.dat";
+        public static string ErrorLogFilename = "errors_audio.log";
 
         public const string RegAppName = "PersonalAnalytics"; // set manually
         public const int Port = 57827; // needed for the retrospection (local web server)
@@ -90,7 +92,7 @@ namespace Shared
         public const string EmailAddress2 = "ameyer@ifi.uzh.ch";
         public const string PrivacyStatementUri = "";
 #else
-        public const string EmailAddress1 = "ameyer@ifi.uzh.ch"; // main email address
+        public const string EmailAddress1 = "christoph.vogel@uzh.ch"; // main email address
         public static string EmailAddress2 = string.Empty;
         public const string PrivacyStatementUri = @"https://pluto.ifi.uzh.ch/PersonalAnalytics";
 #endif

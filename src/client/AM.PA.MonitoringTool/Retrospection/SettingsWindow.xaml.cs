@@ -102,6 +102,16 @@ namespace Retrospection
             }
             CbPopUpInterval.SelectionChanged += CbPopUpInterval_SelectionChanged;
 
+            //AudioTracker fields
+            //TODO: refactor and get from a method in AudioTracker class
+            List<string> devices = AudioTracker.Daemon.GetAudioInputDevices();
+            foreach (string deviceProductName in devices)
+            {
+                CbMicrophoneSelection.Items.Add(deviceProductName);
+            }
+            CbMicrophoneSelection.SelectedValue = AudioTracker.Settings.inputAudioDeviceName;
+            CbMicrophoneSelection.SelectionChanged += CbMicrophoneSelection_SelectionChanged;
+
             //PolarEnabled.IsChecked = defaultPolarTrackerEnabled;
             //PolarEnabled.Checked += CbChecked_Update;
             //PolarEnabled.Unchecked += CbChecked_Update;
@@ -130,6 +140,11 @@ namespace Retrospection
             UpdateSettingsChanged();
         }
 
+        private void CbMicrophoneSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateSettingsChanged();
+        }
+
         private void UpdateSettingsChanged()
         {
             try
@@ -141,9 +156,10 @@ namespace Retrospection
                  (defaultOpenRetrospectionInFullScreen != CbOpenRetrospectionInFullScreen.IsChecked.Value) ||
                  /*(defaultTimeSpentShowEmailsEnabled != CbTimeSpentShowEmailsEnabled.IsChecked.Value) ||*/
                  (defaultTimeSpentHideMeetingsWithoutAttendeesEnabled != CbTimeSpentHideMeetingsWithoutAttendeesEnabled.IsChecked.Value) ||
-                 (defaultTimeSpentShowProgramsEnabled != CbTimeSpentShowProgramsEnabled.IsChecked.Value) /*||
+                 (defaultTimeSpentShowProgramsEnabled != CbTimeSpentShowProgramsEnabled.IsChecked.Value) || /*
                  (defaultPolarTrackerEnabled != PolarEnabled.IsChecked.Value) ||
                  (defaultFitbitTrackerEnabled != FitbitEnabled.IsChecked.Value)*/
+                 (AudioTracker.Settings.inputAudioDeviceName != CbMicrophoneSelection.SelectedValue.ToString())
                  )
                 {
                     SaveButtonsEnabled(true);
@@ -195,6 +211,11 @@ namespace Retrospection
                 if (CbOpenRetrospectionInFullScreen.IsChecked != null && defaultOpenRetrospectionInFullScreen != CbOpenRetrospectionInFullScreen.IsChecked.Value)
                 {
                     dto.OpenRetrospectionInFullScreen = CbOpenRetrospectionInFullScreen.IsChecked.Value;
+                }
+                if (AudioTracker.Settings.inputAudioDeviceName != CbMicrophoneSelection.SelectedValue.ToString())
+                {
+                    AudioTracker.Settings.inputAudioDeviceName = CbMicrophoneSelection.SelectedValue.ToString();
+                    //TODO: restart recording with new device
                 }
                 else { dto.OpenRetrospectionInFullScreen = null; }
 
@@ -270,6 +291,11 @@ namespace Retrospection
 
             DialogResult = true;
             this.Close();
+        }
+
+        private void CbPopUpsEnabled_Checked_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

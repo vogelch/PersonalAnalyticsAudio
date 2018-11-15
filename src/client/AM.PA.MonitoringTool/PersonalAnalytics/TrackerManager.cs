@@ -58,7 +58,7 @@ namespace PersonalAnalytics
         {
             Register(new WindowsActivityTracker.Daemon());
             Register(new TimeSpentVisualizer.Visualizers.TimeSpentVisualizer());
-            Register(new UserEfficiencyTracker.Daemon());
+            //Register(new UserEfficiencyTracker.Daemon());
             Register(new UserInputTracker.Daemon());
             Register(new MsOfficeTracker.Daemon());
             //Register(new PolarTracker.Deamon());

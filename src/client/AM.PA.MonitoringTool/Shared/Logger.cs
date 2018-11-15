@@ -53,7 +53,7 @@ namespace Shared
         /// <returns></returns>
         public static string GetLogPath()
         {
-            return Path.Combine(Settings.ExportFilePath, "errors.log");
+            return Path.Combine(Settings.ExportFilePath, Settings.ErrorLogFilename);
         }
     }
 }

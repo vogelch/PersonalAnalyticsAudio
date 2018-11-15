@@ -26,6 +26,16 @@
                      VerticalAlignment="Top"
                      Header="Data Tracker Settings">
                 <StackPanel Margin="10">
+                    <TextBlock Text="Selected microphone for audio recording:" />
+                    <ComboBox x:Name="CbMicrophoneSelection"
+                                  Width="220"
+                                  Margin="0,5,0,0"
+                                  HorizontalAlignment="Left"
+                                  SelectedValuePath="Content">
+                    </ComboBox>
+                    <TextBlock Margin="20 0 0 0"
+                        Foreground="Gray"
+                        TextWrapping="Wrap" ><Run Text="Hint: T"/><Run Text="o mute the microphone, press the blue button on the device. To stop audio data collection, you can also pause PersonalAnalytics "/><Run Text="(right click on the icon in the task bar)."/><LineBreak/><Run/></TextBlock>
                     <CheckBox x:Name="CbPopUpsEnabled" Content="Productivity pop-ups enabled" />
                     <TextBlock Margin="20 0 0 0"
                                Foreground="Gray"
@@ -36,13 +46,13 @@
                         <TextBlock Text="How often should the pop-up be displayed to ask you about your perceived productivity?" />
                         <ComboBox x:Name="CbPopUpInterval"
                                   Width="200"
-                                  Margin="0 5 10 0"
+                                  Margin="0,5,0,0"
                                   HorizontalAlignment="Left"
                                   SelectedValuePath="Content">
-                            <ComboBoxItem>20 minutes</ComboBoxItem>
-                            <ComboBoxItem>30 minutes</ComboBoxItem>
-                            <ComboBoxItem>60 minutes</ComboBoxItem>
-                            <ComboBoxItem>120 minutes</ComboBoxItem>
+                            <ComboBoxItem Content="20 minutes"/>
+                            <ComboBoxItem Content="30 minutes"/>
+                            <ComboBoxItem Content="60 minutes"/>
+                            <ComboBoxItem Content="120 minutes"/>
                         </ComboBox>
                     </StackPanel>
 
@@ -68,14 +78,14 @@
                 </StackPanel>
             </TabItem>
         </TabControl>
-		
-		
-		<StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
+
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
             <Button Content="Save" x:Name="BtnSave" Click="SaveClicked" Foreground="White" Background="{x:Static paColors:Settings.RetrospectionColorBrush}" BorderBrush="{x:Static paColors:Settings.RetrospectionColorBrush}" Padding="5 0 5 0" Margin="20 0 0 0" />
             <Button Content="Cancel" x:Name="BtnCancel" Click="CancelClicked" Foreground="Gray" Background="{x:Static paColors:Settings.GrayColorBrush}" BorderBrush="{x:Static paColors:Settings.GrayColorBrush}" Padding="5 0 5 0" Margin="10 0 0 0"  />
         </StackPanel>
 
-		        <Grid Background="{x:Static paColors:Settings.GrayColorBrush}" Grid.Row="3">
+        <Grid Background="{x:Static paColors:Settings.GrayColorBrush}" Grid.Row="3">
             <Grid.Resources>
                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                     <Setter Property="Foreground" Value="{x:Static paColors:Settings.DarkGrayColorBrush}" />

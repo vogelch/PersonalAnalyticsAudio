@@ -81,3 +81,6 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Microsoft.Graph.Core.xml
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\obj\Debug\PersonalAnalytics.application
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\obj\Debug\PersonalAnalytics.csproj.CopyComplete
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\libmp3lame.32.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\libmp3lame.64.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\NAudio.Lame.dll

@@ -4,6 +4,7 @@
 // Licensed under the MIT License.
 
 using NAudio.CoreAudioApi;
+using NAudio.Wave;
 using Shared;
 using Shared.Data;
 using System;
@@ -72,11 +73,12 @@ namespace AudioTracker.Views
                 //TODO: check Windows settings (?)
                 //TODO: preselect plausible input
 
-                MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
-                MMDeviceCollection AudioDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active);
-                Logger.WriteToConsole("Finsihed looking for audio devices. Found " + AudioDevices.Count + " devices.");
+                //MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
+                //MMDeviceCollection AudioDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active); // DataFlow.All
+                int waveInDevices = WaveIn.DeviceCount;
+                Logger.WriteToConsole("Finsihed looking for audio devices. Found " + waveInDevices + " devices.");
 
-                if (AudioDevices.Count > 0)
+                if (waveInDevices > 0)
                 {
                     AudioDeviceList.Visibility = Visibility.Visible;
                 }
@@ -86,9 +88,12 @@ namespace AudioTracker.Views
                 }
 
                 AudioDevicesSelectionList.Items.Clear();
-                foreach (MMDevice CurrentDevice in AudioDevices)
+                //TODO: refactor: functional code should not be in view class
+                for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
                 {
-                    AudioDevicesSelectionList.Items.Add(CurrentDevice);
+                    WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(waveInDevice);
+                    AudioDevicesSelectionList.Items.Add(deviceInfo.ProductName);
+                    Logger.WriteToConsole("Device " + waveInDevice + ": " + deviceInfo.ProductName + ", " + deviceInfo.Channels + " channels, ID: " + deviceInfo.ProductGuid);
                 }
                 FindButton.IsEnabled = true;
             }
@@ -101,16 +106,37 @@ namespace AudioTracker.Views
         private async void OnDeviceSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             FindButton.IsEnabled = false;
-            MMDevice selectedAudioDevice = AudioDevicesSelectionList.SelectedItem as MMDevice;
-            Daemon.inputAudioDevice = selectedAudioDevice;
+            //MMDevice selectedAudioDevice = AudioDevicesSelectionList.SelectedItem as MMDevice;
 
-            //Logger.WriteToConsole("Selected audio device: " + selectedAudioDevice.ProductName + " / " + );
+            int waveInDevices = WaveIn.DeviceCount;
+            for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
+            {
+                WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(waveInDevice);
+                if (deviceInfo.ProductName.Equals(AudioDevicesSelectionList.SelectedItem))
+                {
+                    Settings.inputAudioDeviceNumber = waveInDevice;
+                }
+                else
+                {
+                    //TODO
+                }
+            }
+            //Settings.inputAudioDeviceName = selectedAudioDevice.FriendlyName; // selectedAudioDevice.DeviceFriendlyName;
+
             /*
-            selectedAudioDevice.ProductName;
-            selectedAudioDevice.Channels;
-            selectedAudioDevice.FriendlyName;
-            selectedAudioDevice.State;
-            selectedAudioDevice.ID;
+            Logger.WriteToConsole("Selected audio device: " + selectedAudioDevice.DeviceFriendlyName + " / "); // USB PnP Sound Device
+            Logger.WriteToConsole(selectedAudioDevice.FriendlyName + " / "); // Mikrofon (USB PnP Sound Device)
+            Logger.WriteToConsole(selectedAudioDevice.ID + " / "); // {0.0.1.00000000}.{fc598ff8-af26-467b-b29b-ea9b906dda9a}
+            Logger.WriteToConsole(selectedAudioDevice.State + " / "); // Active
+            Logger.WriteToConsole(selectedAudioDevice.Properties + " / ");
+
+            var msg = new Exception("Selected audio device: " + selectedAudioDevice.FriendlyName +"(" + selectedAudioDevice.ID + ")");
+            Logger.WriteToLogFile(msg);
+
+            if (selectedAudioDevice.DeviceFriendlyName != "USB PnP Sound Device")
+            {
+                //TODO: warning
+            }
             */
 
             //TODO: show visualization of audio input here such that the user can check that he has selected the correct audio device and that it works

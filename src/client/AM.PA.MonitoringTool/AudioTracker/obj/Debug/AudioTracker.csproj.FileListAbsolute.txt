@@ -26,3 +26,6 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\AudioTracker.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\AudioTracker.pdb
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\Daemon.cs
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\libmp3lame.32.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\libmp3lame.64.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\NAudio.Lame.dll
