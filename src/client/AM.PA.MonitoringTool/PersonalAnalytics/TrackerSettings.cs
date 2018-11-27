@@ -78,9 +78,11 @@ namespace Shared.Data
 
             try
             {
+                /*
                 var userEfficiencyTracker = GetUserEfficiencyTracker();
                 if (userEfficiencyTracker != null) dto.PopUpEnabled = userEfficiencyTracker.PopUpEnabled;
                 if (userEfficiencyTracker != null) dto.PopUpInterval = (int)userEfficiencyTracker.PopUpIntervalInMins.TotalMinutes;
+                */
 
                 var userInputTracker = GetUserInputTracker();
                 if (userInputTracker != null) dto.UserInputTrackerEnabled = userInputTracker.UserInputTrackerEnabled;

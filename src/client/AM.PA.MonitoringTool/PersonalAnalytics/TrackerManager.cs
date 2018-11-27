@@ -348,7 +348,7 @@ namespace PersonalAnalytics
         #region Taskbar Icon Options
 
         /// <summary>
-        /// Dreates a taskbar icon to modify its tooltip and create the context menu options
+        /// Creates a taskbar icon to modify its tooltip and create the context menu options
         /// </summary>
         public void InitializeTaskBarIcon()
         {

@@ -76,11 +76,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\ProcessHelper.cs" />
-    <Compile Include="Helpers\ProcessAsyncHelper.cs" />
+    <Compile Include="Helpers\DeviceNotification.cs" />
+    <Compile Include="Helpers\JavaHelper.cs" />
+    <Compile Include="Models\DeviceEvent.cs" />
     <Compile Include="Views\ChooseAudioDevice.xaml.cs" />
     <Compile Include="Views\FirstStartWindow.xaml.cs" />
-    <Compile Include="Helpers\ProcessToActivityMapper.cs" />
     <Compile Include="Models\ActivityCategory.cs" />
     <Compile Include="Models\WindowsActivity.cs" />
     <Compile Include="Models\WindowsActivityEntry.cs" />
@@ -98,6 +98,9 @@
     <Compile Include="Visualizations\WeekWorkTimeBarChart.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.5\lib\net45\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
@@ -109,7 +112,10 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Presentation" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.XML" />

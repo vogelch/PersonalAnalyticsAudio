@@ -29,3 +29,6 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\libmp3lame.32.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\libmp3lame.64.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\NAudio.Lame.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\Hardcodet.Wpf.TaskbarNotification.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\Hardcodet.Wpf.TaskbarNotification.xml

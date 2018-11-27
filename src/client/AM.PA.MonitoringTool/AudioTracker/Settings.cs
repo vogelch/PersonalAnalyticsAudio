@@ -13,15 +13,16 @@ namespace AudioTracker
         public const bool IsEnabled = true; // for initial release deactivating is not enabled
         public const bool IsMuted = false;
         public const bool IS_RAW_RECORDING_ENABLED = true;
+        public const bool IS_DEVICE_EVENT_NOTIFICATION_ENABLED = true;
+        public const bool IS_DEVICE_EVENT_RECORDING_ENABLED = true;
         internal const string Name = "Audio Tracker";
         internal const string TRACKER_ENEABLED_SETTING = "AudioTrackerEnabled";
-        internal const int SAVE_TO_DATABASE_INTERVAL = 30 * 1000;
 
-        internal static string AudioDevice;
         internal static int inputAudioDeviceNumber = 0;
         public static string inputAudioDeviceName; //TODO: look into access modifier
         internal static int Channels = 2;
         internal static int SampleRate = 44100; // in kHz
+        internal static int AudioRecordingChunkLength = 30000; // in milliseconds
         //TODO: recording setting
 
         //Deamon

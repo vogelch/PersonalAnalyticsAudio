@@ -109,6 +109,7 @@ namespace AudioTracker.Views
             //MMDevice selectedAudioDevice = AudioDevicesSelectionList.SelectedItem as MMDevice;
 
             int waveInDevices = WaveIn.DeviceCount;
+            Daemon.lastNumberOfAudioDevices = waveInDevices;
             for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
             {
                 WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(waveInDevice);

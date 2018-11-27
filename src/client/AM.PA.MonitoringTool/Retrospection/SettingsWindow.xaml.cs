@@ -49,8 +49,8 @@ namespace Retrospection
         private void SetDefaultValues(SettingsDto dto)
         {
             // get defaults
-            defaultPopUpIsEnabled = dto.PopUpEnabled.Value;
-            defaultPopUpInterval = dto.PopUpInterval.Value;
+            //defaultPopUpIsEnabled = dto.PopUpEnabled.Value;
+            //defaultPopUpInterval = dto.PopUpInterval.Value;
             defaultOffice365ApiEnabled = dto.Office365ApiEnabled.Value;
             //defaultUserInputTrackerEnabled = dto.UserInputTrackerEnabled.Value;
             defaultOpenRetrospectionInFullScreen = dto.OpenRetrospectionInFullScreen.Value;

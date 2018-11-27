@@ -167,14 +167,17 @@ namespace Retrospection
             var visualizations = new List<IVisualization>();
             foreach (var tracker in _trackers.Where(t => t.IsEnabled() == true && t.IsRunning))
             {
-                switch (type)
+                if (tracker.GetVisualizationsDay(date) != null)
                 {
-                    case VisType.Day:
-                        visualizations.AddRange(tracker.GetVisualizationsDay(date).Where(i => i.IsEnabled));
-                        break;
-                    case VisType.Week:
-                        visualizations.AddRange(tracker.GetVisualizationsWeek(date).Where(i => i.IsEnabled));
-                        break;
+                    switch (type)
+                    {
+                        case VisType.Day:
+                            visualizations.AddRange(tracker.GetVisualizationsDay(date).Where(i => i.IsEnabled));
+                            break;
+                        case VisType.Week:
+                            visualizations.AddRange(tracker.GetVisualizationsWeek(date).Where(i => i.IsEnabled));
+                            break;
+                    }
                 }
             }
 
