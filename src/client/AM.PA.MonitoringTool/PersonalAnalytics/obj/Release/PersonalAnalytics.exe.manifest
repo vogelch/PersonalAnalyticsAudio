@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="27011072">
-      <assemblyIdentity name="AudioTracker" version="0.9.6904.23447" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="27011584">
+      <assemblyIdentity name="AudioTracker" version="0.9.6905.33185" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>NTfLB0T8zV2yoGas/Z9rP+fBKA59uOxSRqgy/syEC9M=</dsig:DigestValue>
+        <dsig:DigestValue>9WqPFIfDehrJOCIujoEHYacQKlol43ORI2P+qWTT3WA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -151,14 +151,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NAudio.dll" size="479232">
-      <assemblyIdentity name="NAudio" version="1.8.4.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NAudio.dll" size="507904">
+      <assemblyIdentity name="NAudio" version="1.8.5.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>r+MeJQkHpvb7jWrr15xXbvTXOtYbxAPeKcq49GId4dI=</dsig:DigestValue>
+        <dsig:DigestValue>kiVMtUu92HX2lQwq+/4XwAG799zNQ9Q+r9t9m/7DWv4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -194,19 +194,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>n5kGkJL1ENl8gopC8UWT/HRDGSrEtAVfGglS2dNyI9Y=</dsig:DigestValue>
+        <dsig:DigestValue>/9dkxTyw+7b727mVoYSOL6h56tHGChYPvrstQi71SjE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Retrospection.dll" size="660992">
-      <assemblyIdentity name="Retrospection" version="1.0.6904.23448" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="Retrospection" version="1.0.6905.33186" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>LvAMKoFfSot9oK4h5KEggY8uXxXeFQAidAB7te2v7cA=</dsig:DigestValue>
+        <dsig:DigestValue>BGOoZAM1QjJtiHbAGTk6dsYdCMjEWes9Bs77ujGDAm8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

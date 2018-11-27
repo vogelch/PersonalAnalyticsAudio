@@ -97,6 +97,9 @@ namespace AudioTracker
 
         public override void Start()
         {
+            JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.32.dll", "libmp3lame.32.dll");
+            JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.64.dll", "libmp3lame.64.dll");
+
             isPaused = false;
             try
             {

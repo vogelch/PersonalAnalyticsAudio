@@ -34,3 +34,5 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Retrospection\bin\Release\AudioTracker.pdb
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Retrospection\bin\Release\AudioTracker.dll.config
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Retrospection\bin\Release\NAudio.xml
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Retrospection\bin\Release\Resources\LibMP3Lame\libmp3lame.32.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\Retrospection\bin\Release\Resources\LibMP3Lame\libmp3lame.64.dll
