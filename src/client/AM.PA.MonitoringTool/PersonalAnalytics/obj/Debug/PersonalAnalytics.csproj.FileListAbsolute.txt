@@ -84,3 +84,5 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\libmp3lame.32.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\libmp3lame.64.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\NAudio.Lame.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Resources\LibMP3Lame\libmp3lame.32.dll
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\PersonalAnalytics\bin\Debug\Resources\LibMP3Lame\libmp3lame.64.dll

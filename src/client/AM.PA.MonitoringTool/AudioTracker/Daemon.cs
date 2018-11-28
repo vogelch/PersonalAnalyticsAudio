@@ -97,6 +97,7 @@ namespace AudioTracker
 
         public override void Start()
         {
+            //TODO: this should not be necessary
             JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.32.dll", "libmp3lame.32.dll");
             JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.64.dll", "libmp3lame.64.dll");
 
@@ -111,7 +112,7 @@ namespace AudioTracker
                 checkAudioDeviceTimer = new System.Timers.Timer();
                 checkAudioDeviceTimer.Interval = 5000; // Settings.UserInputAggregationInterval.TotalMilliseconds;
                 checkAudioDeviceTimer.Elapsed += CheckAudioDeviceTick;
-                checkAudioDeviceTimer.Start();
+                //checkAudioDeviceTimer.Start();
 
                 // start device notifications
                 
@@ -232,6 +233,7 @@ namespace AudioTracker
                 // Check whether Java is available, copy LIUM jar file resource to executing location
                 if (!JavaHelper.IsJavaAvailable())
                 {
+                    //TODO: do not contine but abort gracefully under this condition
                     Logger.WriteToConsole("Java is NOT available on the system.");
                     var msg = new Exception("Java is NOT available on the system.");
                     Logger.WriteToLogFile(msg);
@@ -262,6 +264,8 @@ namespace AudioTracker
             {
                 lastNumberOfAudioDevicesTick = currentNumberOfAudioDevices;
                 Logger.WriteToConsole("An audio device has been added.");
+                var msg = new Exception("An audio device has been added.");
+                Logger.WriteToLogFile(msg);
 
                 //TODO: check if it is the same device which was removed
 
@@ -327,6 +331,7 @@ namespace AudioTracker
 
                     var msg = new Exception("Audio recording has started.");
                     Logger.WriteToLogFile(msg);
+                    Database.GetInstance().LogInfo("Audio recording has started.");
                 }
                 catch (Exception e)
                 {
@@ -418,7 +423,7 @@ namespace AudioTracker
                 int lengthOfRecording = (int)(1000 * waveFile.Length / waveFile.WaveFormat.AverageBytesPerSecond);
                 if (lengthOfRecording != Settings.AudioRecordingChunkLength)
                 {
-                    var msg = new Exception("There was a problem with the recording; either the user has stopped recording or the microphone was unplugged.");
+                    var msg = new Exception("Recording of audio segment has stopped early (after " + lengthOfRecording  + " milliseconds).");
                     Logger.WriteToLogFile(msg);
                     if (isPaused)
                     {
@@ -454,8 +459,11 @@ namespace AudioTracker
         {
             Logger.WriteToConsole("Event args: " + e.ToString());
 
-            var msg = new Exception("Recording has stopped (PersonalAnalytics paused or shut down).");
+            //TODO: remove abuse of log file and store result solely in database log table
+            var msg = new Exception("Audio recording has stopped.");
             Logger.WriteToLogFile(msg);
+            Database.GetInstance().LogInfo("Audio recording has stopped.");
+
             if (waveSource != null)
             {
                 waveSource.Dispose();
@@ -876,7 +884,10 @@ namespace AudioTracker
 
         private static void ConvertWavToMp3(string WavFile, string Mp3FileName)
         {
-            CheckAddBinPath();
+            //CheckAddBinPath();
+
+            //const string libname = @"libmp3lame.dll";
+            //[DllImport(libname, CallingConvention = CallingConvention.Cdecl)]
 
             using (var resultMemoryStream = new MemoryStream())
             using (var reader = new WaveFileReader(WavFile))

@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
 using Shared;
+using Shared.Data;
 
 namespace AudioTracker.Helpers
 {
@@ -23,6 +24,7 @@ namespace AudioTracker.Helpers
             RegistryKey subKey = rk.OpenSubKey("SOFTWARE\\JavaSoft\\Java Runtime Environment");
             string currentVerion = subKey.GetValue("CurrentVersion").ToString();
             Logger.WriteToConsole("Java version: " + currentVerion);
+            Database.GetInstance().LogInfo("A registry entry for Java has been found on the participant's system. Version information: " + currentVerion);
 
             bool isAvailable = false;
             List<String> output = new List<string>();
@@ -62,9 +64,14 @@ namespace AudioTracker.Helpers
                 result = process.StandardOutput.ReadToEnd();
                 string error = null;
                 error = process.StandardError.ReadToEnd();
-                Logger.WriteToConsole("Java test: " + result + "//" + error);
+                Database.GetInstance().LogInfo("Java is available on the participant's system. Java test command (java -version) has been executed successfully. Resulting information: " + result + " Detailed information: " + error.Trim());
 
                 isAvailable = (process.ExitCode == 0);
+
+                if (!isAvailable)
+                {
+                    Database.GetInstance().LogError("Java is NOT available on the participant's system. Java test command (java -version) failed. Resulting information: " + result + " Detailed information: " + error.Trim());
+                }
             }
             catch (Exception ex)
             {
@@ -78,6 +85,7 @@ namespace AudioTracker.Helpers
         {
             //TODO: return a boolean indicating whether it was successful
             //TODO: instead loop through the folder and take the most recent version present
+            //TODO: move to another class
             const string subfolder = "PersonalAnalytics.Resources.LIUM.";
             var assembly = Assembly.GetExecutingAssembly();
             foreach (var name in assembly.GetManifestResourceNames())
@@ -96,14 +104,21 @@ namespace AudioTracker.Helpers
                 */
             }
 
-            using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+            try
             {
-                using (var file = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
-                    resource.CopyTo(file);
+                    using (var file = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    {
+                        resource.CopyTo(file);
+                    }
                 }
+                //TODO: resource exists? file is writable?
             }
-            //TODO: resource exists? file is writable?
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
         }
 
     }
