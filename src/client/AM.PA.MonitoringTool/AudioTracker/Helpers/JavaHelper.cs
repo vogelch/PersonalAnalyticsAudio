@@ -84,13 +84,14 @@ namespace AudioTracker.Helpers
         public static void WriteResourceToFile(string resourceName, string fileName)
         {
             //TODO: return a boolean indicating whether it was successful
-            //TODO: instead loop through the folder and take the most recent version present
             //TODO: move to another class
-            const string subfolder = "PersonalAnalytics.Resources.LIUM.";
             var assembly = Assembly.GetExecutingAssembly();
+
+            //TODO: instead loop through the folder and take the most recent version present
+            const string subfolder = "PersonalAnalytics.Resources.LIUM.";
+            /*
             foreach (var name in assembly.GetManifestResourceNames())
             {
-                /*
                 // Skip names outside of your desired subfolder
                 if (!name.StartsWith(subfolder))
                 {
@@ -101,8 +102,8 @@ namespace AudioTracker.Helpers
                 {
                     input.CopyTo(output);
                 }
-                */
             }
+            */
 
             try
             {

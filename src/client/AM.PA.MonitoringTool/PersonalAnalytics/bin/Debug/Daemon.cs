@@ -97,6 +97,11 @@ namespace AudioTracker
 
         public override void Start()
         {
+
+            string[] resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            var msg1 = new Exception("Resource names: " + string.Join(" ; ", resourceNames));
+            Logger.WriteToLogFile(msg1);
+
             //TODO: this should not be necessary
             JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.32.dll", "libmp3lame.32.dll");
             JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.64.dll", "libmp3lame.64.dll");
