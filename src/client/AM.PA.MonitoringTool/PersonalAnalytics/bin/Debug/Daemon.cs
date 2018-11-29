@@ -103,6 +103,7 @@ namespace AudioTracker
             Logger.WriteToLogFile(msg1);
 
             //TODO: this should not be necessary
+            //TODO: do this only if raw recording is activated?
             JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.32.dll", "libmp3lame.32.dll");
             JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.64.dll", "libmp3lame.64.dll");
 
@@ -615,8 +616,8 @@ namespace AudioTracker
                 }
                 */
 
-                checkAudioDeviceTimer = null;
-                checkAudioDeviceTimer.Dispose();
+                //checkAudioDeviceTimer = null;
+                //checkAudioDeviceTimer.Dispose();
 
                 // Unregister idle time checker Timer
                 if (_idleCheckTimer != null)
@@ -636,13 +637,6 @@ namespace AudioTracker
 
                 // Stop audio recording
                 StopAudioRecording();
-                if (Settings.IS_RAW_RECORDING_ENABLED)
-                {
-                    if (waveSource != null)
-                    {
-                        waveSource.StopRecording();
-                    }
-                }
             }
             catch (Exception e)
             {
