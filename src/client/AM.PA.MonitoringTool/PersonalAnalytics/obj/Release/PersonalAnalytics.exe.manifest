@@ -44,13 +44,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="30275072">
-      <assemblyIdentity name="AudioTracker" version="0.9.6907.22908" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="AudioTracker" version="0.9.6907.23714" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>E2f7/67axRJeCjzHvPglCjUS1npsD1KDqaibiaN57nw=</dsig:DigestValue>
+        <dsig:DigestValue>646FPA8LS1LIP+PiYwovq71sDoSvL+ykNTvGdCRmlTA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -194,19 +194,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>yqx6vBMkCTGbSgeRHyVgBSS4iiPtOOPUrrttpMhdVYI=</dsig:DigestValue>
+        <dsig:DigestValue>ZVVwR5Xl4OyiQVhUHlrRaC/48igb6+bmzrs+mxeLw+Q=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Retrospection.dll" size="660992">
-      <assemblyIdentity name="Retrospection" version="1.0.6907.22909" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="Retrospection" version="1.0.6907.23715" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>hT7gzFLRK7AsD/W8fLk0rETAIFPx1yrsJxz3hDBGbDY=</dsig:DigestValue>
+        <dsig:DigestValue>xuP4oAKlmnp002hVWBvZD/X/gs4aZUJqlZf0firKJBs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
