@@ -66,7 +66,6 @@ namespace AudioTracker.Views
         {
             try
             {
-                Logger.WriteToConsole("Start looking for audio devices");
                 AudioDeviceList.Visibility = Visibility.Hidden;
                 FindButton.IsEnabled = false;
 
@@ -76,7 +75,7 @@ namespace AudioTracker.Views
                 //MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
                 //MMDeviceCollection AudioDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active); // DataFlow.All
                 int waveInDevices = WaveIn.DeviceCount;
-                Logger.WriteToConsole("Finsihed looking for audio devices. Found " + waveInDevices + " devices.");
+                Database.GetInstance().LogInfo("AudioTracker startup window: Finsihed looking for audio devices; found " + waveInDevices + " devices.");
 
                 if (waveInDevices > 0)
                 {
@@ -84,17 +83,20 @@ namespace AudioTracker.Views
                 }
                 else
                 {
-                    //TODO: warning/error message
+                    //TODO: show warning/error message
+                    Database.GetInstance().LogError("AudioTracker: no audio devices found.");
                 }
 
                 AudioDevicesSelectionList.Items.Clear();
                 //TODO: refactor: functional code should not be in view class
+                string listOfAudioDeviceInformation = "";
                 for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
                 {
                     WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(waveInDevice);
                     AudioDevicesSelectionList.Items.Add(deviceInfo.ProductName);
-                    Logger.WriteToConsole("Device " + waveInDevice + ": " + deviceInfo.ProductName + ", " + deviceInfo.Channels + " channels, ID: " + deviceInfo.ProductGuid);
+                    listOfAudioDeviceInformation += "Device " + waveInDevice + ": " + deviceInfo.ProductName + ", " + deviceInfo.Channels + " channels, ID: " + deviceInfo.ProductGuid + "\n";
                 }
+                Database.GetInstance().LogInfo("AudioTracker: List of audio devices found at startup:\n" + listOfAudioDeviceInformation.TrimEnd('\n'));
                 FindButton.IsEnabled = true;
             }
             catch (Exception ex)

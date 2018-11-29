@@ -29,6 +29,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 using System.Drawing;
 using System.Management;
 using AudioTracker.Helpers;
+using AudioTracker.Models;
 
 namespace AudioTracker
 {
@@ -97,15 +98,14 @@ namespace AudioTracker
 
         public override void Start()
         {
-
             string[] resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
             var msg1 = new Exception("Resource names: " + string.Join(" ; ", resourceNames));
             Logger.WriteToLogFile(msg1);
 
             //TODO: this should not be necessary
             //TODO: do this only if raw recording is activated?
-            JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.32.dll", "libmp3lame.32.dll");
-            JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.64.dll", "libmp3lame.64.dll");
+            //JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.32.dll", "libmp3lame.32.dll");
+            //JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.64.dll", "libmp3lame.64.dll");
 
             isPaused = false;
             try
@@ -379,6 +379,7 @@ namespace AudioTracker
                 }
                 float maxValue = relativeAmplitudes.Max();
                 float minValue = relativeAmplitudes.Min();
+                float avgValue = relativeAmplitudes.Sum() / relativeAmplitudes.Length;
 
                 Dictionary<float, int> bucket = new Dictionary<float, int>();
                 float modeAmplitudeValue = float.MinValue;
@@ -402,7 +403,6 @@ namespace AudioTracker
                         modeAmplitudeValue = sample;
                         maxCount = count;
                     }
-
                 }
 
                 //TODO: calculate median
@@ -411,13 +411,15 @@ namespace AudioTracker
                 //TODO: sum of samples non-relative, max, min, avg non-relative
                 //TODO: chech endianess of system (BitConverter.IsLittleEndian)
 
+                bool isMicrophoneProbablyMuted = false;
                 if (maxValue < 0.0015 && minValue > -0.0015 && maxCount > 25000)
                 {
                     Console.WriteLine("Microphone is probably muted...");
                     Console.WriteLine("Maximum value: " + maxValue);
                     Console.WriteLine("Minimum value: " + minValue);
-                    Console.WriteLine("Average value: " + relativeAmplitudes.Sum() / relativeAmplitudes.Length);
+                    Console.WriteLine("Average value: " + avgValue);
                     Console.WriteLine("Mode value: " + modeAmplitudeValue + " (" + maxCount + " occurrences)");
+                    isMicrophoneProbablyMuted = true;
                 }
 
                 // loudness: 20 * log10(Abs(amplitude))
@@ -439,6 +441,7 @@ namespace AudioTracker
                     {
                         lastAbnormalRecordingAbort = DateTime.Now;
                         Logger.WriteToConsole("PersonalAnalytics recording aborted abnormally!");
+                        Database.GetInstance().LogWarning("AudioTracker: Recording of audio segment has stopped early (after " + lengthOfRecording + " milliseconds).");
                     }
                     //..
                 }
@@ -452,11 +455,26 @@ namespace AudioTracker
 
                 // start analysis of new audio chunk
                 string outputFilename = Shared.Settings.ExportFilePath + "\\" + "lium-" + fileNameDateTime + ".seg";
-                liumAnalysis(audioFilename, outputFilename);
+                string liumConsoleOutput = liumAnalysis(audioFilename, outputFilename);
+
+                //store audio recording meta data into database
+                DateTime dummyDateTime = new DateTime();
+                AudioRecording newAudioRecording = new AudioRecording(dummyDateTime, dummyDateTime, audioFilenameMp3, outputFilename, liumConsoleOutput, 0, lengthOfRecording, 
+                    minValue, maxValue, avgValue, modeAmplitudeValue, 0.0, 0.0, isMicrophoneProbablyMuted);
+                Queries.StoreAudioRecording(newAudioRecording);
             }
             catch (Exception ex)
             {
                 Logger.WriteToLogFile(ex);
+                if (IsDiskFull(ex))
+                {
+                    Database.GetInstance().LogError("AudioTracker: Could not save recording to file because there was not enough disk space. " + ex.Message);
+
+                }
+                else
+                {
+                    Database.GetInstance().LogError(ex.Message);
+                }
             }
 
         }
@@ -498,7 +516,6 @@ namespace AudioTracker
                 if (wparamAsInt == WPARAM_DEVICE_ARRIVAL) // neu eingesteckt, funktioniert für USB-Stick
                 {
                     Logger.WriteToConsole("Device plugged in (e.g. USB stick)");
-                    //if
                 }
                 */
                 if (wparamAsInt == WPARAM_DEVICE_NODE_CHANGED)
@@ -714,78 +731,11 @@ namespace AudioTracker
         /// </summary>
         /// <param name="liumInputFilename"></param>
         /// <param name="liumOutputFilename"></param>
-        private void runJarFile(string liumInputFilename, string liumOutputFilename)
+        private string liumAnalysis(string liumInputFilename, string liumOutputFilename)
         {
-            try
-            {
-                //TODO: get binary name "lium.jar" from settings
-                //string epubCheckPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "lium.jar");
-                Process liumProcess = new Process();
-                liumProcess.StartInfo.FileName = @"java";
-                string arguments = "-Xmx2024m -jar lium.jar --fInputMask=./ " + liumInputFilename + " --sOutputMask=./ " + liumOutputFilename + " --doCEClustering showName \"";
-                liumProcess.StartInfo.Arguments = arguments;
-                //liumProcess.EnableRaisingEvents = true;
-                liumProcess.StartInfo.UseShellExecute = false;
-                liumProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                liumProcess.StartInfo.CreateNoWindow = true;
-                liumProcess.StartInfo.RedirectStandardOutput = true;
-                liumProcess.StartInfo.RedirectStandardError = true;
-                //liumProcess.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
-                //liumProcess.ErrorDataReceived += new DataReceivedEventHandler(OutputHandler);
+            string lium_output_std = null;
+            string lium_output_err = null;
 
-                //Start the process
-                string result = null;
-                try
-                {
-                    liumProcess.Start();
-
-                    /*
-                    Logger.WriteToConsole("LIUM console output: ");
-                    while ((output = liumProcess.StandardOutput.ReadLine()) != null)
-                    {
-                        Logger.WriteToConsole(output);
-                    }
-                    liumProcess.WaitForExit();
-                    */
-
-                    var output = new List<string>();
-                    while (liumProcess.StandardOutput.Peek() > -1)
-                    {
-                        output.Add(liumProcess.StandardOutput.ReadLine());
-                    }
-                    while (liumProcess.StandardError.Peek() > -1)
-                    {
-                        output.Add(liumProcess.StandardError.ReadLine());
-                    }
-                    liumProcess.WaitForExit();
-                    result = String.Join("\n", output);
-                }
-                catch (Exception e)
-                {
-                    Logger.WriteToLogFile(e);
-                }
-
-                //Logger.WriteToConsole("LIUM console output: " + result);
-                //return result;
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteToLogFile(ex);
-                //return null;
-            }
-        }
-
-        /*
-        static void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
-        {
-            //TODO: feed it back to a string and give this to method
-
-            //Console.WriteLine(outLine.Data);
-        }
-        */
-
-        private void liumAnalysis(string liumInputFilename, string liumOutputFilename)
-        {
             var worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.WorkerSupportsCancellation = true;
@@ -846,9 +796,11 @@ namespace AudioTracker
                         if (liumProcess.WaitForExit(timeout) && outputWaitHandle.WaitOne(timeout) && errorWaitHandle.WaitOne(timeout))
                         {
                             Logger.WriteToConsole("LIUM process completed.");
-                            //Logger.WriteToConsole("LIUM output: " + output.ToString());
-                            //Logger.WriteToConsole("LIUM error messages: " + error.ToString());
-                            
+                            lium_output_std = output.ToString();
+                            lium_output_err = error.ToString();
+                            //Logger.WriteToConsole("LIUM output: " + lium_output_std);
+                            //Logger.WriteToConsole("LIUM error messages: " + lium_output_err);
+
                             //TODO: Check process.ExitCode here.
                             //TODO: write to database
                         }
@@ -877,17 +829,15 @@ namespace AudioTracker
                 {
                     //TODO: write to error log
                 }
+
             }
+
+            return lium_output_err;
 
         }
 
         private static void ConvertWavToMp3(string WavFile, string Mp3FileName)
         {
-            //CheckAddBinPath();
-
-            //const string libname = @"libmp3lame.dll";
-            //[DllImport(libname, CallingConvention = CallingConvention.Cdecl)]
-
             using (var resultMemoryStream = new MemoryStream())
             using (var reader = new WaveFileReader(WavFile))
             using (var writer = new LameMP3FileWriter(Mp3FileName, reader.WaveFormat, 16/*LAMEPreset.VBR_90*/))
@@ -916,38 +866,12 @@ namespace AudioTracker
         }
         */
 
-        public static void CheckAddBinPath()
+        static bool IsDiskFull(Exception ex)
         {
-            // find path to 'bin' folder
-            var binPath = Path.Combine(new string[] { AppDomain.CurrentDomain.BaseDirectory, "bin" });
-            // get current search path from environment
-            var path = Environment.GetEnvironmentVariable("PATH") ?? "";
-
-            // add 'bin' folder to search path if not already present
-            if (!path.Split(Path.PathSeparator).Contains(binPath, StringComparer.CurrentCultureIgnoreCase))
-            {
-                path = string.Join(Path.PathSeparator.ToString(), new string[] { path, binPath });
-                Environment.SetEnvironmentVariable("PATH", path);
-            }
+            const int HR_ERROR_HANDLE_DISK_FULL = unchecked((int)0x80070027);
+            const int HR_ERROR_DISK_FULL = unchecked((int)0x80070070);
+            return ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL;
         }
-
-        public bool ByteArrayToFile(string byteArrayTargetFileName, byte[] inputByteArray)
-        {
-            try
-            {
-                using (var fs = new FileStream(byteArrayTargetFileName, FileMode.Create, FileAccess.Write))
-                {
-                    fs.Write(inputByteArray, 0, inputByteArray.Length);
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception caught in process: {0}", ex);
-                return false;
-            }
-        }
-
 
     }
 

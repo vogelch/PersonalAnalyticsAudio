@@ -13,6 +13,7 @@ using System.Linq;
 using System.Globalization;
 using WindowsActivityTracker.Helpers;
 using WindowsActivityTracker.Models;
+using AudioTracker.Models;
 
 namespace AudioTracker.Data
 {
@@ -27,8 +28,21 @@ namespace AudioTracker.Data
 
         private static readonly string QUERY_CREATE_AUDIO_RECORDINGS = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_RECORDINGS_TABLE_NAME + " ("
                                                                             + "id INTEGER PRIMARY KEY, "
-                                                                            + "filename TEXT, "
-                                                                            + "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)";
+                                                                            + "recording_start_time DATETIME, "
+                                                                            + "recording_end_time DATETIME, "
+                                                                            + "filename_mp3 TEXT, "
+                                                                            + "filename_lium TEXT, "
+                                                                            + "lium_console_output TEXT, "
+                                                                            + "num_samples INTEGER, "
+                                                                            + "length_milliseconds INTEGER, "
+                                                                            + "min_value_relative REAL, "
+                                                                            + "max_value_relative REAL, "
+                                                                            + "avg_value_relative REAL, "
+                                                                            + "mode_value_relative REAL, "
+                                                                            + "median_value_relative REAL, "
+                                                                            + "peak_to_peak_level REAL, "
+                                                                            + "is_mute BOOLEAN, "
+                                                                            + "storing_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)";
 
         //private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.DbTable + " (id INTEGER PRIMARY KEY, time TEXT, tsStart TEXT, tsEnd TEXT, window TEXT, process TEXT);";
         //private static readonly string QUERY_INDEX = "CREATE INDEX IF NOT EXISTS windows_activity_ts_start_idx ON " + Settings.DbTable + " (tsStart);";
@@ -54,6 +68,40 @@ namespace AudioTracker.Data
             try
             {
                 var res = Database.GetInstance().ExecuteDefaultQuery(QUERY_CREATE_AUDIO_RECORDINGS);
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
+        }
+
+        /// <summary>
+        /// Inserts meta data about an audio recording into the audio table
+        /// </summary>
+        /// <param name="newAudioRecording">audio recording object with meta data to store into the database</param>
+        internal static void StoreAudioRecording(AudioRecording newAudioRecording)
+        {
+            try
+            {
+                string query = "INSERT INTO " + Settings.AUDIO_RECORDINGS_TABLE_NAME +
+                    " (recording_start_time, recording_end_time, filename_mp3, filename_lium, lium_console_output, num_samples, " +
+                    "length_milliseconds, min_value_relative, max_value_relative, avg_value_relative, mode_value_relative, " +
+                    "median_value_relative, peak_to_peak_level, is_mute) VALUES (" + 
+                    "NULL, " + //newAudioRecording.RecordingStartTime.ToString("yyyy-mm-dd HH:MM:SS") + ", " + 
+                    "NULL, " + //newAudioRecording.RecordingEndTime.ToString("yyyy-mm-dd HH:MM:SS") + ", " + 
+                    "'" + newAudioRecording.FilenameMp3 + "'" + ", " +
+                    "'" + newAudioRecording.FilenameLium + "'" + ", " +
+                    "'" + newAudioRecording.LiumConsoleOutput + "'" + ", " +
+                    newAudioRecording.NumSamples + ", " +
+                    newAudioRecording.LengthMilliseconds + ", " +
+                    newAudioRecording.MinValueRelative + ", " +
+                    newAudioRecording.MaxValueRelative + ", " +
+                    newAudioRecording.AvgValueRelative + ", " +
+                    newAudioRecording.ModeValueRelative + ", " +
+                    "NULL, " + //newAudioRecording.MedianValueRelative + ", " +
+                    "NULL, " + //newAudioRecording.PeakToPeakLevel + ", " +
+                    (newAudioRecording.IsMute ? 1 : 0) + ")";
+                Database.GetInstance().ExecuteDefaultQuery(query);
             }
             catch (Exception e)
             {

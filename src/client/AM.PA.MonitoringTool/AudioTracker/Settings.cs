@@ -27,12 +27,7 @@ namespace AudioTracker
 
         //Deamon
         internal const string TRACKER_NAME = "Audio Tracker";
-        internal const int SYNCHRONIZE_INTERVALL_FIRST = 2 * 60 * 1000; //2 minutes
-        internal const int SYNCHRONIZE_INTERVALL_SECOND = 20 * 60 * 1000; //20 minutes
-
-        private static int liumRunInterval = 30; // in seconds
-        private const int MouseSnapshotIntervalInSeconds = 1;
-        public static TimeSpan MouseSnapshotInterval = TimeSpan.FromSeconds(MouseSnapshotIntervalInSeconds);
+        private const int liumRunInterval = 30; // in seconds
 
         internal const int UserInputAggregationIntervalInSeconds = 60; // save one entry every 60 seconds into the database => if changed, make sure to change tsStart and tsEnd in SaveToDatabaseTick
         internal static TimeSpan UserInputAggregationInterval = TimeSpan.FromSeconds(UserInputAggregationIntervalInSeconds);
@@ -40,10 +35,5 @@ namespace AudioTracker
         //Database table names
         internal static readonly string AUDIO_TABLE_NAME = "audio";
         internal static readonly string AUDIO_RECORDINGS_TABLE_NAME = "audio_recordings";
-
-        //Database field names
-        internal static readonly string DOWNLOAD_START_DATE = "FitbitDownloadStartDate";
-        internal static readonly string LAST_SYNCED_DATE = "FitbitLastSynced";
-
     }
 }

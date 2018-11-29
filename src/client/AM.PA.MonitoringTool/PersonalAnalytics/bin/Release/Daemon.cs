@@ -29,6 +29,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 using System.Drawing;
 using System.Management;
 using AudioTracker.Helpers;
+using AudioTracker.Models;
 
 namespace AudioTracker
 {
@@ -379,6 +380,7 @@ namespace AudioTracker
                 }
                 float maxValue = relativeAmplitudes.Max();
                 float minValue = relativeAmplitudes.Min();
+                float avgValue = relativeAmplitudes.Sum() / relativeAmplitudes.Length;
 
                 Dictionary<float, int> bucket = new Dictionary<float, int>();
                 float modeAmplitudeValue = float.MinValue;
@@ -402,7 +404,6 @@ namespace AudioTracker
                         modeAmplitudeValue = sample;
                         maxCount = count;
                     }
-
                 }
 
                 //TODO: calculate median
@@ -411,13 +412,15 @@ namespace AudioTracker
                 //TODO: sum of samples non-relative, max, min, avg non-relative
                 //TODO: chech endianess of system (BitConverter.IsLittleEndian)
 
+                bool isMicrophoneProbablyMuted = false;
                 if (maxValue < 0.0015 && minValue > -0.0015 && maxCount > 25000)
                 {
                     Console.WriteLine("Microphone is probably muted...");
                     Console.WriteLine("Maximum value: " + maxValue);
                     Console.WriteLine("Minimum value: " + minValue);
-                    Console.WriteLine("Average value: " + relativeAmplitudes.Sum() / relativeAmplitudes.Length);
+                    Console.WriteLine("Average value: " + avgValue);
                     Console.WriteLine("Mode value: " + modeAmplitudeValue + " (" + maxCount + " occurrences)");
+                    isMicrophoneProbablyMuted = true;
                 }
 
                 // loudness: 20 * log10(Abs(amplitude))
@@ -439,6 +442,7 @@ namespace AudioTracker
                     {
                         lastAbnormalRecordingAbort = DateTime.Now;
                         Logger.WriteToConsole("PersonalAnalytics recording aborted abnormally!");
+                        Database.GetInstance().LogWarning("AudioTracker: Recording of audio segment has stopped early (after " + lengthOfRecording + " milliseconds).");
                     }
                     //..
                 }
@@ -453,10 +457,25 @@ namespace AudioTracker
                 // start analysis of new audio chunk
                 string outputFilename = Shared.Settings.ExportFilePath + "\\" + "lium-" + fileNameDateTime + ".seg";
                 liumAnalysis(audioFilename, outputFilename);
+
+                //store audio recording meta data into database
+                DateTime dummyDateTime = new DateTime();
+                AudioRecording newAudioRecording = new AudioRecording(dummyDateTime, dummyDateTime, audioFilenameMp3, outputFilename, null, 0, lengthOfRecording, minValue, maxValue, avgValue, 
+                    modeAmplitudeValue, 0.0, 0.0, isMicrophoneProbablyMuted);
+                Queries.StoreAudioRecording(newAudioRecording);
             }
             catch (Exception ex)
             {
                 Logger.WriteToLogFile(ex);
+                if (IsDiskFull(ex))
+                {
+                    Database.GetInstance().LogError("AudioTracker: Could not save recording to file because there was not enough disk space. " + ex.Message);
+
+                }
+                else
+                {
+                    Database.GetInstance().LogError(ex.Message);
+                }
             }
 
         }
@@ -929,6 +948,15 @@ namespace AudioTracker
                 path = string.Join(Path.PathSeparator.ToString(), new string[] { path, binPath });
                 Environment.SetEnvironmentVariable("PATH", path);
             }
+        }
+
+        static bool IsDiskFull(Exception ex)
+        {
+            const int HR_ERROR_HANDLE_DISK_FULL = unchecked((int)0x80070027);
+            const int HR_ERROR_DISK_FULL = unchecked((int)0x80070070);
+
+            return ex.HResult == HR_ERROR_HANDLE_DISK_FULL
+                || ex.HResult == HR_ERROR_DISK_FULL;
         }
 
         public bool ByteArrayToFile(string byteArrayTargetFileName, byte[] inputByteArray)

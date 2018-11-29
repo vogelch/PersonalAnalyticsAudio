@@ -66,11 +66,13 @@ namespace Retrospection
             SaveButtonsEnabled(false);
 
             // set previous values & add event handlers
+            /*
             CbPopUpsEnabled.IsChecked = defaultPopUpIsEnabled;
             CbPopUpsEnabled.Checked += CbPopUpsEnabled_Checked;
             CbPopUpsEnabled.Unchecked += CbPopUpsEnabled_Checked;
 
             CbPopUpInterval.SelectedValue = defaultPopUpInterval + minutesStr;
+            */
 
             CbOfficeApiEnabled.IsChecked = defaultOffice365ApiEnabled;
             CbOfficeApiEnabled.Checked += CbChecked_Update;
@@ -96,11 +98,13 @@ namespace Retrospection
             //CbUserInputTrackerEnabled.Checked += CbChecked_Update;
             //CbUserInputTrackerEnabled.Unchecked += CbChecked_Update;
 
+            /*
             if (CbPopUpsEnabled.IsChecked.Value)
             {
                 CbPopUpInterval.IsEnabled = true;
             }
             CbPopUpInterval.SelectionChanged += CbPopUpInterval_SelectionChanged;
+            */
 
             //AudioTracker fields
             //TODO: refactor and get from a method in AudioTracker class
@@ -124,11 +128,13 @@ namespace Retrospection
 
         #region User Changed Values
 
+        /*
         private void CbPopUpsEnabled_Checked(object sender, RoutedEventArgs e)
         {
             if (CbPopUpsEnabled.IsChecked != null) CbPopUpInterval.IsEnabled = CbPopUpsEnabled.IsChecked.Value;
             UpdateSettingsChanged();
         }
+        */
 
         private void CbChecked_Update(object sender, RoutedEventArgs e)
         {
@@ -149,8 +155,8 @@ namespace Retrospection
         {
             try
             {
-                if ((defaultPopUpIsEnabled != CbPopUpsEnabled.IsChecked.Value) ||
-                 (defaultPopUpInterval + minutesStr != CbPopUpInterval.SelectedValue.ToString()) ||
+                if (/*(defaultPopUpIsEnabled != CbPopUpsEnabled.IsChecked.Value) ||
+                 (defaultPopUpInterval + minutesStr != CbPopUpInterval.SelectedValue.ToString()) ||*/
                  (defaultOffice365ApiEnabled != CbOfficeApiEnabled.IsChecked.Value) ||
                  /*(defaultUserInputTrackerEnabled != CbUserInputTrackerEnabled.IsChecked.Value) ||*/
                  (defaultOpenRetrospectionInFullScreen != CbOpenRetrospectionInFullScreen.IsChecked.Value) ||
@@ -189,6 +195,7 @@ namespace Retrospection
 
             try
             {
+                /*
                 if (CbPopUpsEnabled.IsChecked != null && (defaultPopUpIsEnabled != CbPopUpsEnabled.IsChecked.Value))
                 {
                     dto.PopUpEnabled = CbPopUpsEnabled.IsChecked.Value;
@@ -201,6 +208,7 @@ namespace Retrospection
                     dto.PopUpInterval = int.Parse(intervalString, CultureInfo.InvariantCulture);
                 }
                 else { dto.PopUpInterval = null; }
+                */
 
                 if (CbOfficeApiEnabled.IsChecked != null && defaultOffice365ApiEnabled != CbOfficeApiEnabled.IsChecked.Value)
                 {

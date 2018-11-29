@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="30279168">
-      <assemblyIdentity name="AudioTracker" version="0.9.6907.21934" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="30281728">
+      <assemblyIdentity name="AudioTracker" version="0.9.6907.29462" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>uTVEu8NzzUzAoq8HoRk83GvL8HT/2axCnHiTd/ZBA6E=</dsig:DigestValue>
+        <dsig:DigestValue>l0/hWwlSEvlfD5zcLoMqAvYj1N575p5vz62dFhzkTgk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -194,19 +194,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>pLrdLeYl1bLBLBIZvknzHWgeAVesvfqsnHhAWGlb7f4=</dsig:DigestValue>
+        <dsig:DigestValue>u66/hA4cfz+6C18Iz3ZGdRpCZcI3akryTH42X6zF8QY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Retrospection.dll" size="668160">
-      <assemblyIdentity name="Retrospection" version="1.0.6907.21938" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Retrospection.dll" size="666624">
+      <assemblyIdentity name="Retrospection" version="1.0.6907.29466" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>90Faw5Dbx9ZbxB575Ft2qK5lF7euPOEbuiz0sHaZrBA=</dsig:DigestValue>
+        <dsig:DigestValue>Umo3IV+5sY74cfKz/qNfu9kBZlHbC4E2273+5TyrYw8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

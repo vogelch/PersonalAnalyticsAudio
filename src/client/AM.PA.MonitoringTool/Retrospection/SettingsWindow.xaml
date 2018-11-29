@@ -36,26 +36,6 @@
                     <TextBlock Margin="20 0 0 0"
                         Foreground="Gray"
                         TextWrapping="Wrap" ><Run Text="Hint: T"/><Run Text="o mute the microphone, press the blue button on the device. To stop audio data collection, you can also pause PersonalAnalytics "/><Run Text="(right click on the icon in the task bar)."/><LineBreak/><Run/></TextBlock>
-                    <CheckBox x:Name="CbPopUpsEnabled" Content="Productivity pop-ups enabled" />
-                    <TextBlock Margin="20 0 0 0"
-                               Foreground="Gray"
-                               Text="Hint: This will show you a pop-up to chose your perceived productivity in an interval specified below. We suggest you to enable this feature as it may give you additional, unique insights."
-                               TextWrapping="Wrap" />
-
-                    <StackPanel Margin="20 20 0 0">
-                        <TextBlock Text="How often should the pop-up be displayed to ask you about your perceived productivity?" />
-                        <ComboBox x:Name="CbPopUpInterval"
-                                  Width="200"
-                                  Margin="0,5,0,0"
-                                  HorizontalAlignment="Left"
-                                  SelectedValuePath="Content">
-                            <ComboBoxItem Content="20 minutes"/>
-                            <ComboBoxItem Content="30 minutes"/>
-                            <ComboBoxItem Content="60 minutes"/>
-                            <ComboBoxItem Content="120 minutes"/>
-                        </ComboBox>
-                    </StackPanel>
-
                     <CheckBox x:Name="CbOfficeApiEnabled"
                               Margin="0 20 0 0"
                               Content="Office 365 Tracker enabled" />
@@ -64,17 +44,17 @@
                                Foreground="Gray"
                                Text="Hint: If you enable this tracker, you need to log-in with your Office 365 work account. This tracker will then regularly collect the meetings in your calendar, and the number of emails sent, received an your inbox size. The contents of the emails and meetings are NOT accessed."
                                TextWrapping="Wrap" />
-
                     <CheckBox x:Name="CbOpenRetrospectionInFullScreen"
                               Margin="0 20 0 0"
                               Content="Always open the retrospection in full screen" />
-
                     <CheckBox x:Name="CbTimeSpentShowProgramsEnabled"
                               Margin="0 20 0 0"
                               Content="Show programs used in the Time Spent-table" />
                     <CheckBox x:Name="CbTimeSpentHideMeetingsWithoutAttendeesEnabled"
                               Margin="0 5 0 0"
                               Content="Hide meetings with no attendees in the Time Spent-table" />
+
+                    <StackPanel Margin="20 20 0 0"/>
                 </StackPanel>
             </TabItem>
         </TabControl>
