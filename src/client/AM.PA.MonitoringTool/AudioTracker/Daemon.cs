@@ -135,6 +135,7 @@ namespace AudioTracker
                                 NotificationHandle.BalloonTipTitle = "PersonalAnalytics: Audio device removed!";
                                 NotificationHandle.BalloonTipText = "The microphone used by the audio tracker was removed. Audio recording has been stopped. Personal Analytics will try to automatically resume recording on reconnect."; // ": Audio device " + inputAudioDevice.DeviceFriendlyName + " was removed.";
                                 NotificationHandle.Icon = SystemIcons.Exclamation;
+                                NotificationHandle.BalloonTipClosed += (sender, e) => { var thisIcon = (NotifyIcon)sender; thisIcon.Visible = false; thisIcon.Dispose(); };
                                 NotificationHandle.Text = Name + ": Audio device removed!";
                                 NotificationHandle.Visible = true;
                                 NotificationHandle.ShowBalloonTip(5000);
@@ -162,6 +163,7 @@ namespace AudioTracker
                             Settings.inputAudioDevice = AudioDeviceHelper.GetDeviceFromDeviceName(LastInputAudioDeviceName);
                             Settings.inputAudioDeviceName = Settings.inputAudioDevice.DeviceFriendlyName;
                             Settings.inputAudioDeviceNumber = AudioDeviceHelper.GetDeviceNumberFromDeviceName(Settings.inputAudioDeviceName);
+                            //TODO: show a message again at this point which tells the user that recording resumes?
                             StopAudioRecording();
                             StartAudioRecording();
                         }
@@ -218,9 +220,10 @@ namespace AudioTracker
             Logger.WriteToLogFile(msg1);
 
             //TODO: this should not be necessary
+            //TODO: move this to the constructor?
             //TODO: do this only if raw recording is activated?
-            //JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.32.dll", "libmp3lame.32.dll");
-            //JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.64.dll", "libmp3lame.64.dll");
+            JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.32.dll", "libmp3lame.32.dll");
+            JavaHelper.WriteResourceToFile("AudioTracker.Resources.LibMP3Lame.libmp3lame.64.dll", "libmp3lame.64.dll");
 
             // start device notifications
             DeviceChangeNotifier.Start();
@@ -235,34 +238,18 @@ namespace AudioTracker
                 checkAudioDeviceTimer.Elapsed += CheckAudioDeviceTick;
                 //checkAudioDeviceTimer.Start();
 
-                // create management class object
-                //ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
-
-                /*
-                Machine Make: LENOVO
-                Machine Model: 20AWS18T00
-                System Type: x64-based PC
-                Host Name: DESKTOP-23JVN3Q
-                Logon User Name: DESKTOP-23JVN3Q\Christoph
-                */
-
-                //collection to store all management objects
-                /*
+                // Write system info to database
+                ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
                 ManagementObjectCollection moc = mc.GetInstances();
                 if (moc.Count != 0)
                 {
                     foreach (ManagementObject mo in mc.GetInstances())
                     {
-                        // display general system information
-                        Console.WriteLine("\nMachine Make: {0}\nMachine Model: {1}\nSystem Type: {2}\nHost Name: {3}\nLogon User Name: {4}\n",
-                                          mo["Manufacturer"].ToString(),
-                                          mo["Model"].ToString(),
-                                          mo["SystemType"].ToString(),
-                                          mo["DNSHostName"].ToString(),
-                                          mo["UserName"].ToString());
+                        string currentSystemInfo = "\nMachine Make: " + mo["Manufacturer"].ToString() + "\nMachine Model: " + mo["Model"].ToString() + "\nSystem Type: " +
+                            mo["SystemType"].ToString() + "\nHost Name: " + mo["DNSHostName"].ToString() + "\nLogon User Name: " + mo["UserName"].ToString() + "\n";
+                        Database.GetInstance().LogInfo(currentSystemInfo);
                     }
                 }
-                */
 
                 // Check whether Java is available, copy LIUM jar file resource to executing location
                 if (!JavaHelper.IsJavaAvailable())
@@ -418,6 +405,7 @@ namespace AudioTracker
                 {
                     var msg = new Exception("Recording of audio segment has stopped early (after " + lengthOfRecording  + " milliseconds).");
                     Logger.WriteToLogFile(msg);
+                    Database.GetInstance().LogWarning("AudioTracker: Recording of audio segment has stopped early (after " + lengthOfRecording + " milliseconds).");
                     if (isPaused)
                     {
                         Logger.WriteToConsole("PersonalAnalytics was paused.");
@@ -426,7 +414,6 @@ namespace AudioTracker
                     {
                         lastAbnormalRecordingAbort = DateTime.Now;
                         Logger.WriteToConsole("PersonalAnalytics recording aborted abnormally!");
-                        Database.GetInstance().LogWarning("AudioTracker: Recording of audio segment has stopped early (after " + lengthOfRecording + " milliseconds).");
                     }
                     //..
                 }
@@ -454,6 +441,7 @@ namespace AudioTracker
             catch (Exception ex)
             {
                 Logger.WriteToLogFile(ex);
+                // catch System.IO.IOException
                 if (IsDiskFull(ex))
                 {
                     Database.GetInstance().LogError("AudioTracker: Could not save recording to file because there was not enough disk space. " + ex.Message);
@@ -469,10 +457,8 @@ namespace AudioTracker
 
         void waveSource_RecordingStopped(object sender, EventArgs e)
         {
-            Logger.WriteToConsole("Event args: " + e.ToString());
-
             //TODO: remove abuse of log file and store result solely in database log table
-            var msg = new Exception("Audio recording has stopped.");
+            var msg = new Exception("Audio recording has stopped. Event args: " + e.ToString());
             Logger.WriteToLogFile(msg);
             Database.GetInstance().LogInfo("AudioTracker: Audio recording has stopped.");
 
@@ -485,7 +471,10 @@ namespace AudioTracker
 
         public override void Stop()
         {
-            Logger.WriteToConsole("Daemon stop called.");
+            var msg = new Exception("Daemon stop called.");
+            Logger.WriteToLogFile(msg);
+            Database.GetInstance().LogInfo("AudioTracker: Daemon stop called.");
+
             isPaused = true;
 
             try
