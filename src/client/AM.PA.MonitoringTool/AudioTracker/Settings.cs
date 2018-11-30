@@ -3,6 +3,7 @@
 // 
 // Licensed under the MIT License.
 
+using NAudio.CoreAudioApi;
 using System;
 
 namespace AudioTracker
@@ -18,8 +19,9 @@ namespace AudioTracker
         internal const string Name = "Audio Tracker";
         internal const string TRACKER_ENEABLED_SETTING = "AudioTrackerEnabled";
 
-        internal static int inputAudioDeviceNumber = 0;
+        internal static int? inputAudioDeviceNumber = 0;
         public static string inputAudioDeviceName; //TODO: look into access modifier
+        internal static MMDevice inputAudioDevice;
         internal static int Channels = 2;
         internal static int SampleRate = 44100; // in kHz
         internal static int AudioRecordingChunkLength = 30000; // in milliseconds
@@ -34,6 +36,7 @@ namespace AudioTracker
 
         //Database table names
         internal static readonly string AUDIO_TABLE_NAME = "audio";
-        internal static readonly string AUDIO_RECORDINGS_TABLE_NAME = "audio_recordings";
+        internal static readonly string AUDIO_RECORDINGS_TABLE_NAME = "audio_recording";
+        internal static readonly string AUDIO_VOLUME_TABLE_NAME = "audio_volume";
     }
 }

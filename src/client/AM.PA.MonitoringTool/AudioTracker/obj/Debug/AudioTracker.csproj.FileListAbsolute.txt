@@ -1,5 +1,4 @@
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\AudioTracker.csprojAssemblyReference.cache
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\Views\ChooseAudioDevice.g.cs
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\Views\FirstStartWindow.g.cs
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\AudioTracker_MarkupCompile.cache
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\AudioTracker_MarkupCompile.lref
@@ -18,7 +17,6 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\NAudio.xml
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\System.Data.SQLite.xml
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\bin\Debug\System.Data.SQLite.dll.config
-C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\Views\ChooseAudioDevice.baml
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\Views\FirstStartWindow.baml
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\AudioTracker.g.resources
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker\obj\Debug\AudioTracker.csproj.CoreCompileInputs.cache

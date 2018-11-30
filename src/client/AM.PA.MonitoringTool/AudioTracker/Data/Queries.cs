@@ -11,8 +11,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Globalization;
-using WindowsActivityTracker.Helpers;
-using WindowsActivityTracker.Models;
 using AudioTracker.Models;
 
 namespace AudioTracker.Data
@@ -39,9 +37,16 @@ namespace AudioTracker.Data
                                                                             + "max_value_relative REAL, "
                                                                             + "avg_value_relative REAL, "
                                                                             + "mode_value_relative REAL, "
+                                                                            + "mode_value_occurrences REAL, "
                                                                             + "median_value_relative REAL, "
                                                                             + "peak_to_peak_level REAL, "
                                                                             + "is_mute BOOLEAN, "
+                                                                            + "storing_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)";
+
+        private static readonly string QUERY_CREATE_AUDIO_VOLUME = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_VOLUME_TABLE_NAME + " ("
+                                                                            + "id INTEGER PRIMARY KEY, "
+                                                                            + "audio_timestamp DATETIME, "
+                                                                            + "rms_relative_value REAL, "
                                                                             + "storing_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)";
 
         //private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.DbTable + " (id INTEGER PRIMARY KEY, time TEXT, tsStart TEXT, tsEnd TEXT, window TEXT, process TEXT);";
@@ -49,7 +54,7 @@ namespace AudioTracker.Data
         //private static readonly string QUERY_INSERT = "INSERT INTO " + Settings.DbTable + " (time, tsStart, tsEnd, window, process) VALUES ({0}, {1}, {2}, {3}, {4});";
 
         #region Daemon Queries
-
+        
         internal static void CreateAudioTable()
         {
             try
@@ -75,6 +80,18 @@ namespace AudioTracker.Data
             }
         }
 
+        internal static void CreateAudioVolumeTable()
+        {
+            try
+            {
+                var res = Database.GetInstance().ExecuteDefaultQuery(QUERY_CREATE_AUDIO_VOLUME);
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
+        }
+
         /// <summary>
         /// Inserts meta data about an audio recording into the audio table
         /// </summary>
@@ -85,7 +102,7 @@ namespace AudioTracker.Data
             {
                 string query = "INSERT INTO " + Settings.AUDIO_RECORDINGS_TABLE_NAME +
                     " (recording_start_time, recording_end_time, filename_mp3, filename_lium, lium_console_output, num_samples, " +
-                    "length_milliseconds, min_value_relative, max_value_relative, avg_value_relative, mode_value_relative, " +
+                    "length_milliseconds, min_value_relative, max_value_relative, avg_value_relative, mode_value_relative, mode_value_occurrences, " +
                     "median_value_relative, peak_to_peak_level, is_mute) VALUES (" + 
                     "NULL, " + //newAudioRecording.RecordingStartTime.ToString("yyyy-mm-dd HH:MM:SS") + ", " + 
                     "NULL, " + //newAudioRecording.RecordingEndTime.ToString("yyyy-mm-dd HH:MM:SS") + ", " + 
@@ -98,6 +115,7 @@ namespace AudioTracker.Data
                     newAudioRecording.MaxValueRelative + ", " +
                     newAudioRecording.AvgValueRelative + ", " +
                     newAudioRecording.ModeValueRelative + ", " +
+                    newAudioRecording.ModeValueOccurrences + ", " + 
                     "NULL, " + //newAudioRecording.MedianValueRelative + ", " +
                     "NULL, " + //newAudioRecording.PeakToPeakLevel + ", " +
                     (newAudioRecording.IsMute ? 1 : 0) + ")";
