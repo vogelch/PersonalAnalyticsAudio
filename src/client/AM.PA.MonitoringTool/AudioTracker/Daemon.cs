@@ -480,7 +480,7 @@ namespace AudioTracker
             try
             {
                 // stop device change notifier
-                DeviceChangeNotifier.Stop();
+                //DeviceChangeNotifier.Stop();
 
                 //checkAudioDeviceTimer = null;
                 //checkAudioDeviceTimer.Dispose();
