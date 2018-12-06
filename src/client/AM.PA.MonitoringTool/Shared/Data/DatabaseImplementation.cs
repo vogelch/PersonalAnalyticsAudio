@@ -55,6 +55,40 @@ namespace Shared.Data
         }
 
         /// <summary>
+        /// Returns true if the table passed in the first parameter  'tableName' exists and contains a column with a name passed in the second parameter 'columnName'. Returns false otherwise.
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        public bool HasTableColumn(string tableName, string columnName)
+        {
+            if (!HasTable(tableName))
+            {
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    string query = "PRAGMA table_info(" + tableName + ");";
+                    DataTable result = ExecuteReadQuery(query);
+                    var columns = new List<string>();
+                    for (int i = 0; i < result.Rows.Count; i++)
+                    {
+                        columns.Add(result.Rows[i]["name"].ToString());
+                    }
+                    return columns.Contains(columnName);
+                }
+                catch (Exception e)
+                {
+                    Logger.WriteToLogFile(e);
+                    Logger.WriteToLogFile(new Exception("Error while checking existence of column '" + columnName + "' in table '" + tableName + "'."));
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Executes a query (given as parameter).
         /// Also logs the query.
         /// </summary>
@@ -154,30 +188,79 @@ namespace Shared.Data
 
         public void ExecuteQueryWithTransaction(List<string> commands)
         {
-           //try
-           // {
-           //     using (var cmd = new SQLiteCommand(_connection))
-           //     {
-           //         using (var transaction = _connection.BeginTransaction())
-           //         {
-           //             foreach (var item in commands)
-           //             {
-           //                 cmd.CommandText = item;
-           //                 cmd.ExecuteNonQuery();
-           //             }
-           //             transaction.Commit();
-           //         }
-           //     }
-           // }
-           // catch (Exception e)
-           // {
-
-           // }
-           // finally
-           // {
-
-           // }
+            /*
+            try
+            {
+                 using (var cmd = new SQLiteCommand(_connection))
+                 {
+                     using (var transaction = _connection.BeginTransaction())
+                     {
+                         foreach (var item in commands)
+                         {
+                             cmd.CommandText = item;
+                             cmd.ExecuteNonQuery();
+                         }
+                         transaction.Commit();
+                     }
+                 }
+            }
+            catch (Exception e)
+            {
+                //TODO: implement
+            }
+            finally
+            {
+                //TODO: implement
+            }
+            */
         }
+
+        /*
+        /// <summary>
+        /// Executes an insert query (given as parameter); also logs the query.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns>the ID of the newly insert row as a long if inseration was successful or null if it was not</returns>
+        public long? ExecuteInsertQuery(string query)
+        {
+            // check whether there is a valid database connection
+            if (_connection == null || _connection.State != ConnectionState.Open)
+            {
+                return null;
+            }
+
+            // execute query
+            long? lastInsertRowID = null;
+            using (_connection)
+            {
+                SQLiteTransaction transaction = _connection.BeginTransaction();
+
+                var cmd = new SQLiteCommand(query, _connection);
+                try
+                {
+                    WriteQueryToLog(query);
+                    var result = cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Logger.WriteToLogFile(e);
+                    Logger.WriteToLogFile(new Exception("Query: " + query));
+                    return null;
+                }
+                finally
+                {
+                    cmd.Dispose();
+                }
+
+                // get ID of last inserted row
+                lastInsertRowID = _connection.LastInsertRowId;
+
+                // commit transaction
+                transaction.Commit();
+            }
+            return lastInsertRowID;
+        }
+        */
 
         /// <summary>
         /// Executes a query (given as a parameter).

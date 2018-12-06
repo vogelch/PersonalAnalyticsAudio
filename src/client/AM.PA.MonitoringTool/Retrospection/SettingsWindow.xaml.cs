@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Windows.Controls;
 using System.Diagnostics;
 using System.Linq;
+using AudioTracker.Helpers;
 
 namespace Retrospection
 {
@@ -107,14 +108,14 @@ namespace Retrospection
             */
 
             //AudioTracker fields
-            //TODO: refactor and get from a method in AudioTracker class
-            List<string> devices = AudioTracker.Daemon.GetAudioInputDevices();
-            foreach (string deviceProductName in devices)
+            List<string> devices = AudioDeviceHelper.GetActiveInputDevicesList();
+            foreach (string deviceFriendlyName in devices)
             {
-                CbMicrophoneSelection.Items.Add(deviceProductName);
+                CbMicrophoneSelection.Items.Add(deviceFriendlyName);
             }
-            CbMicrophoneSelection.SelectedValue = AudioTracker.Settings.inputAudioDeviceName;
+            CbMicrophoneSelection.SelectedItem = AudioTracker.Settings.GetAudioDeviceFriendlyName();
             CbMicrophoneSelection.SelectionChanged += CbMicrophoneSelection_SelectionChanged;
+            CbMicrophoneSelection.IsEnabled = false; // TODO: remove as soon as switching functionality is working properly
 
             //PolarEnabled.IsChecked = defaultPolarTrackerEnabled;
             //PolarEnabled.Checked += CbChecked_Update;
@@ -165,7 +166,7 @@ namespace Retrospection
                  (defaultTimeSpentShowProgramsEnabled != CbTimeSpentShowProgramsEnabled.IsChecked.Value) || /*
                  (defaultPolarTrackerEnabled != PolarEnabled.IsChecked.Value) ||
                  (defaultFitbitTrackerEnabled != FitbitEnabled.IsChecked.Value)*/
-                 (AudioTracker.Settings.inputAudioDeviceName != CbMicrophoneSelection.SelectedValue.ToString())
+                 (AudioTracker.Settings.GetAudioDeviceFriendlyName() != CbMicrophoneSelection.SelectedValue.ToString())
                  )
                 {
                     SaveButtonsEnabled(true);
@@ -220,9 +221,9 @@ namespace Retrospection
                 {
                     dto.OpenRetrospectionInFullScreen = CbOpenRetrospectionInFullScreen.IsChecked.Value;
                 }
-                if (AudioTracker.Settings.inputAudioDeviceName != CbMicrophoneSelection.SelectedValue.ToString())
+                if (AudioTracker.Settings.GetAudioDeviceFriendlyName() != CbMicrophoneSelection.SelectedValue.ToString())
                 {
-                    AudioTracker.Settings.inputAudioDeviceName = CbMicrophoneSelection.SelectedValue.ToString();
+                    //AudioTracker.Settings.SetAudioDevice() = CbMicrophoneSelection.SelectedValue.ToString();
                     //TODO: restart recording with new device
                 }
                 else { dto.OpenRetrospectionInFullScreen = null; }

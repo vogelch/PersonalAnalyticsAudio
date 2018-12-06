@@ -1,4 +1,9 @@
-﻿using System;
+﻿// Created by Christoph Vogel (christoph.vogel@uzh.ch) from the University of Zurich
+// Created: 2018-10-01
+// 
+// Licensed under the MIT License.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +18,8 @@ namespace AudioTracker.Models
         public string FilenameMp3 { get; set; }
         public string FilenameLium { get; set; }
         public string LiumConsoleOutput { get; set; }
+        public AmplitudeData AmplitudeDataGlobal { get; set; }
+        public List<AmplitudeData> AmplitudeDataResolved { get; set; }
         public int NumSamples { get; set; }
         public int LengthMilliseconds { get; set; }
         public double MinValueRelative { get; set; }

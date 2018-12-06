@@ -4,6 +4,7 @@
 // Licensed under the MIT License.
 
 using AudioTracker.Helpers;
+using AudioTracker.Models;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using Shared;
@@ -19,7 +20,14 @@ namespace AudioTracker.Views
     /// </summary>
     public partial class FirstStartWindow : UserControl, IFirstStartScreen
     {
-        private int? SelectedDeviceNumber;
+        private AudioDevice SelectedDevice = new AudioDevice();
+        /*
+        private int? SelectedDeviceNumber = null;
+        private string SelectedDeviceDeviceFriendlyName = null;
+        private string SelectedDeviceFriendlyName = null;
+        private MMDevice SelectedDevice = null;
+        private string SelectedDeviceID = null;
+        */
 
         public FirstStartWindow()
         {
@@ -38,20 +46,17 @@ namespace AudioTracker.Views
 
         private async void FindDevices(object sender, RoutedEventArgs e)
         {
+            //TODO: check Windows settings (?)
+            //TODO: preselect plausible input
             try
             {
                 AudioDeviceList.Visibility = Visibility.Hidden;
                 FindButton.IsEnabled = false;
 
-                //TODO: check Windows settings (?)
-                //TODO: preselect plausible input
-
-                //MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
-                //MMDeviceCollection AudioDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active); // DataFlow.All
-                int waveInDevices = WaveIn.DeviceCount;
-                Database.GetInstance().LogInfo("AudioTracker startup window: Finsihed looking for audio devices; number of devices found: " + waveInDevices);
-
-                if (waveInDevices > 0)
+                // count number of audio devices available
+                int numberOfWaveInDevices = WaveIn.DeviceCount;
+                Database.GetInstance().LogInfo("AudioTracker startup window: Finsihed looking for audio devices; number of devices found: " + numberOfWaveInDevices);
+                if (numberOfWaveInDevices > 0)
                 {
                     AudioDeviceList.Visibility = Visibility.Visible;
                 }
@@ -60,18 +65,27 @@ namespace AudioTracker.Views
                     //TODO: show warning/error message
                     Database.GetInstance().LogError("AudioTracker: no audio devices found.");
                 }
-
                 AudioDevicesSelectionList.Items.Clear();
-                //TODO: refactor: functional code should not be in view class
+
+                // add audio devices to selection list
+                MMDeviceCollection AudioDevices = AudioDeviceHelper.GetActiveInputDevicesCollection();
+                foreach (MMDevice CurrentAudioDevice in AudioDevices)
+                {
+                    AudioDevicesSelectionList.Items.Add(CurrentAudioDevice);
+                }
+                /*
                 string listOfAudioDeviceInformation = "";
-                for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
+                for (int waveInDevice = 0; waveInDevice < numberOfWaveInDevices; waveInDevice++)
                 {
                     WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(waveInDevice);
                     AudioDevicesSelectionList.Items.Add(deviceInfo.ProductName);
                     listOfAudioDeviceInformation += "Device " + waveInDevice + ": " + deviceInfo.ProductName + ", " + deviceInfo.Channels + " channels, ID: " + deviceInfo.ProductGuid + "\n";
                 }
                 Database.GetInstance().LogInfo("AudioTracker: List of audio devices found at startup:" + '\n' + listOfAudioDeviceInformation.TrimEnd('\n'));
+                */
+
                 FindButton.IsEnabled = true;
+
             }
             catch (Exception ex)
             {
@@ -79,10 +93,20 @@ namespace AudioTracker.Views
             }
         }
 
-        private async void OnDeviceSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnDeviceSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             FindButton.IsEnabled = false;
-            SelectedDeviceNumber = AudioDeviceHelper.GetDeviceNumberFromDeviceName(AudioDevicesSelectionList.SelectedItem.ToString());
+
+            SelectedDevice.DeviceInstance = AudioDevicesSelectionList.SelectedItem as MMDevice;
+            SelectedDevice.ID = SelectedDevice.DeviceInstance.ID;
+            SelectedDevice.DeviceFriendlyName = SelectedDevice.DeviceInstance.DeviceFriendlyName;
+            SelectedDevice.FriendlyName = SelectedDevice.DeviceInstance.FriendlyName;
+
+            SelectedDevice.DeviceNumber = AudioDeviceHelper.GetDeviceNumberFromFriendlyName(SelectedDevice.FriendlyName);
+            AudioDeviceHelper.SetPropertiesFromDeviceNumber(SelectedDevice, (int)SelectedDevice.DeviceNumber);
+
+            Logger.WriteToConsole("The participant selected the device with the friendly name " + SelectedDevice.FriendlyName);
+            Logger.WriteToConsole("The corresponding device number is: " + SelectedDevice.DeviceNumber);
 
             /*
             if (selectedAudioDevice.DeviceFriendlyName != "USB PnP Sound Device")
@@ -100,13 +124,13 @@ namespace AudioTracker.Views
 
         public void NextClicked()
         {
-            Settings.inputAudioDevice = AudioDeviceHelper.GetAudioDeviceFromDeviceNumber((int)SelectedDeviceNumber);
-            Settings.inputAudioDeviceNumber = SelectedDeviceNumber;
-            Settings.inputAudioDeviceName = Settings.inputAudioDevice.DeviceFriendlyName; // FriendlyName
-            if (SelectedDeviceNumber != null)
+            // write selected audio device to settings; needed to communicate this information to the AudioTracker
+            Settings.InputAudioDevice = SelectedDevice;
+
+            if (SelectedDevice.DeviceNumber != null)
             {
-                Database.GetInstance().LogInfo("AudioTracker: The user has selected the device number " + SelectedDeviceNumber + " at startup.");
-                Logger.WriteToConsole("AudioTracker: The user has selected the device number " + SelectedDeviceNumber + " at startup.");
+                Database.GetInstance().LogInfo("AudioTracker: The user has selected the device number " + SelectedDevice.DeviceNumber + " at startup.");
+                Logger.WriteToConsole("AudioTracker: The user has selected the device number " + SelectedDevice.DeviceNumber + " at startup.");
             }
             else
             {

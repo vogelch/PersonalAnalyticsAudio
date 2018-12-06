@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿// Created by Christoph Vogel (christoph.vogel@uzh.ch) from the University of Zurich
+// Created: 2018-10-01
+// 
+// Licensed under the MIT License.
+
+using System.Collections.Generic;
 
 namespace AudioTracker.Models
 {

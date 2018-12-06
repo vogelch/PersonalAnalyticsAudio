@@ -63,14 +63,11 @@ namespace AudioTracker
         private WaveIn waveSource = null;
         private int lastNumberOfAudioDevices = 0;
         private int lastNumberOfAudioDevicesTick = 0;
-        private MMDevice LastInputAudioDevice;
-        private string LastInputAudioDeviceName;
-        private const int recordingSampleRate = 16000;
-        private int recordingChannels = 1;
-        private string recordingFilePrefix = "audio";
+        private AudioDevice LastInputAudioDevice;
         private short[] currentAudioInputBuffer = null;
         private DateTime lastAbnormalRecordingAbort = new DateTime();
         private bool isCurrentStopAbnormal = false;
+        private DateTime startOfCurrentRecording = new DateTime();
 
         #region ITracker Stuff
 
@@ -116,16 +113,13 @@ namespace AudioTracker
                 int wparamAsInt = msg.WParam.ToInt32();
                 if (wparamAsInt == WPARAM_DEVICE_NODE_CHANGED)
                 {
-                    if (Settings.inputAudioDevice != null)
+                    if (Settings.InputAudioDevice != null)
                     {
                         // If an audio device is currently correctly connected, check if current audio device is still connected
-                        MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
-                        MMDeviceCollection AudioDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
-                        if (!AudioDevices.Contains(Settings.inputAudioDevice))
+                        MMDeviceCollection AudioDevices = AudioDeviceHelper.GetActiveInputDevicesCollection();
+                        if (!AudioDevices.Contains(Settings.InputAudioDevice.DeviceInstance))
                         {
-                            Settings.inputAudioDevice = null;
-                            Settings.inputAudioDeviceName = null;
-                            Settings.inputAudioDeviceNumber = null;
+                            Settings.InputAudioDevice = null;
                             if (Settings.IS_DEVICE_EVENT_NOTIFICATION_ENABLED)
                             {
                                 Logger.WriteToConsole("Warning: The audio device currently in use has been unplugged!");
@@ -145,8 +139,7 @@ namespace AudioTracker
                     else
                     {
                         Thread.Sleep(500);
-                        MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
-                        MMDeviceCollection AudioDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+                        MMDeviceCollection AudioDevices = AudioDeviceHelper.GetActiveInputDevicesCollection();
                         List<string> AudioDeviceNames = new List<string>();
                         foreach (MMDevice CurrentDevice in AudioDevices)
                         {
@@ -154,15 +147,18 @@ namespace AudioTracker
                             AudioDeviceNames.Add(CurrentDevice.DeviceFriendlyName);
                         }
                         Logger.WriteToConsole("Checking whether the changed device was the previously removed audio device...");
-                        Logger.WriteToConsole("Last device name: " + LastInputAudioDeviceName);
-                        if (AudioDeviceNames.Contains(LastInputAudioDeviceName))
+                        Logger.WriteToConsole("Last device name: " + LastInputAudioDevice.FriendlyName);
+                        if (AudioDeviceNames.Contains(LastInputAudioDevice.FriendlyName))
                         {
                             Logger.WriteToConsole("The previously disconnected audio device has been plugged in again. Trying to resume recording...");
                             var msg2 = new Exception("The previously disconnected audio device has been plugged in again. Trying to resume recording...");
                             Logger.WriteToLogFile(msg2);
-                            Settings.inputAudioDevice = AudioDeviceHelper.GetDeviceFromDeviceName(LastInputAudioDeviceName);
-                            Settings.inputAudioDeviceName = Settings.inputAudioDevice.DeviceFriendlyName;
-                            Settings.inputAudioDeviceNumber = AudioDeviceHelper.GetDeviceNumberFromDeviceName(Settings.inputAudioDeviceName);
+                            // TODO: set the audio device again as the current audio device
+                            /*
+                            Settings.InputAudioDevice = AudioDeviceHelper.GetDeviceFromDeviceName(LastInputAudioDeviceName);
+                            Settings.InputAudioDeviceName = Settings.InputAudioDevice.DeviceFriendlyName;
+                            Settings.InputAudioDeviceNumber = AudioDeviceHelper.GetDeviceNumberFromDeviceName(Settings.InputAudioDeviceName);
+                            */
                             //TODO: show a message again at this point which tells the user that recording resumes?
                             StopAudioRecording();
                             StartAudioRecording();
@@ -310,93 +306,59 @@ namespace AudioTracker
         private void StartAudioRecording()
         {
             //TODO: return value should be boolean
-            LastInputAudioDeviceName = Settings.inputAudioDeviceName;
+            LastInputAudioDevice = Settings.InputAudioDevice;
 
-            if (Settings.IS_RAW_RECORDING_ENABLED) // TODO: this check should not be here
+            waveSource = new WaveIn(WaveCallbackInfo.FunctionCallback());
+            try
             {
-                waveSource = new WaveIn(WaveCallbackInfo.FunctionCallback());
-                try
-                {
-                    //TODO: check whether audio device has changed since startup
-                    //AudioDeviceHelper.GetAudioDeviceFromDeviceNumber(Settings.inputAudioDeviceNumber);
-                    //Settings.inputAudioDevice = AudioDeviceHelper.GetDeviceNumberFromDeviceName(Settings.inputAudioDeviceName);
-                    waveSource.DeviceNumber = (int)Settings.inputAudioDeviceNumber; //TODO: null check!
-                    Database.GetInstance().LogInfo("AudioTracker: Audio input device number selected at start of recording: " + Settings.inputAudioDeviceNumber);
-                    waveSource.WaveFormat = new WaveFormat(recordingSampleRate, recordingChannels);
-                    waveSource.BufferMilliseconds = Settings.AudioRecordingChunkLength;
-                    waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
-                    waveSource.RecordingStopped += new EventHandler<NAudio.Wave.StoppedEventArgs>(waveSource_RecordingStopped);
-                    waveSource.StartRecording();
+                //TODO: check whether audio device has changed since startup
+                //AudioDeviceHelper.GetAudioDeviceFromDeviceNumber(Settings.inputAudioDeviceNumber);
+                //Settings.inputAudioDevice = AudioDeviceHelper.GetDeviceNumberFromDeviceName(Settings.inputAudioDeviceName);
+                waveSource.DeviceNumber = (int)Settings.InputAudioDevice.DeviceNumber; //TODO: null check!
+                Database.GetInstance().LogInfo("AudioTracker: Audio input device number selected at start of recording: " + Settings.InputAudioDevice.DeviceNumber);
+                waveSource.WaveFormat = new WaveFormat(Settings.RecordingSampleRate, Settings.RecordingNumberOfChannels);
+                waveSource.BufferMilliseconds = Settings.AudioRecordingChunkLength;
+                waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
+                waveSource.RecordingStopped += new EventHandler<NAudio.Wave.StoppedEventArgs>(waveSource_RecordingStopped);
+                startOfCurrentRecording = DateTime.Now;
+                waveSource.StartRecording();
 
-                    var msg = new Exception("Audio recording has started.");
-                    Logger.WriteToLogFile(msg);
-                    Database.GetInstance().LogInfo("AudioTracker: Audio recording has started.");
-                }
-                catch (Exception e)
-                {
-                    Logger.WriteToLogFile(e);
-                }
+                var msg = new Exception("Audio recording has started.");
+                Logger.WriteToLogFile(msg);
+                Database.GetInstance().LogInfo("AudioTracker: Audio recording has started.");
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
             }
         }
 
         private void StopAudioRecording()
         {
             // TODO: return value should be boolean
-            if (Settings.IS_RAW_RECORDING_ENABLED) // TODO: this check should not be necessary at this point; it should actually be IS_RAW_STORING_ENABLED
+            if (waveSource != null)
             {
-                if (waveSource != null)
-                {
-                    waveSource.StopRecording();
-                }
+                waveSource.StopRecording();
             }
         }
 
         void waveSource_DataAvailable(object sender, WaveInEventArgs e)
         {
+            DateTime endOfThisRecording = DateTime.Now;
+            DateTime startOfThisRecording = startOfCurrentRecording;
+            startOfCurrentRecording = endOfThisRecording;
             try
             {
                 string fileNameDateTime = DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss");
-                string audioFilename = Shared.Settings.ExportFilePath + "\\" + recordingFilePrefix + "-" + fileNameDateTime + ".wav";
+                string audioFilename = Shared.Settings.ExportFilePath + "\\" + Settings.RecordingFileNamePrefix + "-" + fileNameDateTime + ".wav";
                 WaveFileWriter waveFile = new WaveFileWriter(audioFilename, waveSource.WaveFormat);
                 waveFile.Write(e.Buffer, 0, e.BytesRecorded);
 
                 // Calculate loudness and check whether microphone is (probably) muted
-                float[] relativeAmplitudes = new float[e.BytesRecorded / 2];
-                int j = 0;
-                for (int i = 0; i < e.BytesRecorded; i += 2)
-                {
-                    short sample = (short)((e.Buffer[i + 1] << 8) | e.Buffer[i + 0]);
-                    float sample32 = sample / 32768.0f; // shouldn't this be 32767?
-                    relativeAmplitudes[j] = sample32;
-                    j++;
-                }
-                float maxValue = relativeAmplitudes.Max();
-                float minValue = relativeAmplitudes.Min();
-                float avgValue = relativeAmplitudes.Sum() / relativeAmplitudes.Length;
-                Tuple<float, int> modeAndOccurrence = GetModeOfRelativeAmplitudes(relativeAmplitudes);
-                float modeAmplitudeValue = modeAndOccurrence.Item1;
-                int modeValueOccurrences = modeAndOccurrence.Item2;
-
-                double RelativeAmplitudeRMSValue = GetAmplitudeRootMeanSquare(relativeAmplitudes);
-                Logger.WriteToConsole("Amplitude RMS: " + RelativeAmplitudeRMSValue);
-                double AmplitudeDBFS = 20 * Math.Log(RelativeAmplitudeRMSValue, 10);
-                Logger.WriteToConsole("Amplitude dB_FS: " + AmplitudeDBFS);
-
-                //TODO: calculate median
-                //TODO: average should be calculated as average of *absolute values*
-                //TODO: display number of samples
-                //TODO: sum of samples non-relative, max, min, avg non-relative
-                //TODO: chech endianess of system (BitConverter.IsLittleEndian)
-                // relative loudness: last second: average |amplitude|
-                //TODO: calculate SNR
-                //TODO: calculate dynamic range
-
-                bool isMicrophoneProbablyMuted = false;
-                if (maxValue < 0.0015 && minValue > -0.0015 && modeValueOccurrences > 25000)
-                {
-                    Console.WriteLine("Microphone is probably muted...");
-                    isMicrophoneProbablyMuted = true;
-                }
+                double[] relativeAmplitudes = AmplitudeHelper.GetRelativeAmplitudes(e.Buffer, e.BytesRecorded);
+                List<AmplitudeData> newAmplitudeDataList = AmplitudeHelper.GetAmplitudeData(e.Buffer, e.BytesRecorded, 30000);
+                AmplitudeData newAmplitudeData = newAmplitudeDataList.ToArray()[0];
+                bool isMicrophoneProbablyMuted = AmplitudeHelper.IsMicrophoneProbablyMuted(newAmplitudeData);
 
                 //Logger.WriteToConsole("Device name: " + inputAudioDevice.DeviceFriendlyName);  <- throws an exception
                 //Logger.WriteToConsole("Device mute: " + inputAudioDevice.AudioEndpointVolume.VolumeRange); // inputAudioDevice.AudioEndpointVolume.Mute.ToString()
@@ -421,18 +383,23 @@ namespace AudioTracker
                 waveFile.Dispose();
                 waveFile = null;
 
-                //save as MP3 file
-                string audioFilenameMp3 = Shared.Settings.ExportFilePath + "\\" + recordingFilePrefix + "-" + fileNameDateTime + ".mp3";
-                ConvertWavToMp3(audioFilename, audioFilenameMp3);
+                //save as MP3 file if raw recording option is enabled
+                string audioFilenameMp3 = null;
+                if (Settings.IS_RAW_RECORDING_ENABLED) // TODO: this check should not be here
+                {
+                    audioFilenameMp3 = Settings.RecordingFileNamePrefix + "-" + fileNameDateTime + ".mp3";
+                    string audioFilePathMp3 = Shared.Settings.ExportFilePath + "\\" + audioFilenameMp3;
+                    ConvertWavToMp3(audioFilename, audioFilePathMp3);
+                }
 
                 // start analysis of new audio chunk
-                string outputFilename = Shared.Settings.ExportFilePath + "\\" + "lium-" + fileNameDateTime + ".seg";
-                string liumConsoleOutput = liumAnalysis(audioFilename, outputFilename);
+                string outputFileName = "lium-" + fileNameDateTime + ".seg";
+                string outputFilePath = Shared.Settings.ExportFilePath + "\\" + outputFileName;
+                string liumConsoleOutput = liumAnalysis(audioFilename, outputFilePath);
 
                 //store audio recording meta data into database
-                DateTime dummyDateTime = new DateTime();
-                AudioRecording newAudioRecording = new AudioRecording(dummyDateTime, dummyDateTime, audioFilenameMp3, outputFilename, liumConsoleOutput, 0, lengthOfRecording, 
-                    minValue, maxValue, avgValue, modeAmplitudeValue, modeValueOccurrences, 0.0, 0.0, isMicrophoneProbablyMuted);
+                AudioRecording newAudioRecording = new AudioRecording(startOfThisRecording, endOfThisRecording, audioFilenameMp3, outputFileName, liumConsoleOutput, 0, lengthOfRecording,
+                    newAmplitudeData.MinValue, newAmplitudeData.MaxValue, newAmplitudeData.AvgValue, newAmplitudeData.ModeValue, newAmplitudeData.ModeOccurrences, 0.0, 0.0, isMicrophoneProbablyMuted);
                 Queries.StoreAudioRecording(newAudioRecording);
 
                 //store amplitude data into database
@@ -477,10 +444,12 @@ namespace AudioTracker
 
             isPaused = true;
 
+            //TODO: properly delete potentially remaining .wav files at shutdown
+
             try
             {
                 // stop device change notifier
-                DeviceChangeNotifier.Stop();
+                //DeviceChangeNotifier.Stop();
 
                 //checkAudioDeviceTimer = null;
                 //checkAudioDeviceTimer.Dispose();
@@ -528,6 +497,10 @@ namespace AudioTracker
         public override void CreateDatabaseTablesIfNotExist()
         {
             Queries.CreateAudioRecordingsTable();
+            Queries.UpdateAllColumnsOfTable(Settings.AUDIO_RECORDINGS_TABLE_NAME, Queries.AUDIO_RECORDINGS_COLUMN_NAMES);
+
+            Queries.CreateAudioVolumeTable();
+            Queries.UpdateAllColumnsOfTable(Settings.AUDIO_VOLUME_TABLE_NAME, Queries.AUDIO_VOLUME_COLUMN_NAMES);
         }
 
         public override void UpdateDatabaseTables(int version)
@@ -708,19 +681,6 @@ namespace AudioTracker
             }
         }
 
-        // Audio input devices
-        public static List<string> GetAudioInputDevices()
-        {
-            var deviceList = new List<string>();
-            int waveInDevices = WaveIn.DeviceCount;
-            for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
-            {
-                string deviceProductName = WaveIn.GetCapabilities(waveInDevice).ProductName;
-                deviceList.Add(deviceProductName);
-            }
-            return deviceList;
-        }
-
         /*
         private LiumResult parseLiumConsoleOutput(String consoleOutput)
         {
@@ -765,46 +725,6 @@ namespace AudioTracker
             const int HR_ERROR_HANDLE_DISK_FULL = unchecked((int)0x80070027);
             const int HR_ERROR_DISK_FULL = unchecked((int)0x80070070);
             return ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL;
-        }
-
-        private static double GetAmplitudeRootMeanSquare(float[] relativeAmplitudes)
-        {
-            // square samples, take average of these squares, take root
-            double SumOfSquares = 0.0;
-            for (int i = 0; i < relativeAmplitudes.Length; i++)
-            {
-                SumOfSquares += relativeAmplitudes[i] * relativeAmplitudes[i];
-            }
-            return Math.Sqrt(SumOfSquares / relativeAmplitudes.Length);
-        }
-
-        private static Tuple<float, int> GetModeOfRelativeAmplitudes(float[] relativeAmplitudes)
-        {
-            Dictionary<float, int> bucket = new Dictionary<float, int>();
-            float modeAmplitudeValue = float.MinValue;
-            int maxCount = 0;
-            int count;
-            foreach (float sample in relativeAmplitudes)
-            {
-                if (bucket.TryGetValue(sample, out count))
-                {
-                    count++;
-                    bucket[sample] = count;
-                }
-                else
-                {
-                    count = 1;
-                    bucket.Add(sample, count);
-                }
-
-                if (count >= maxCount)
-                {
-                    modeAmplitudeValue = sample;
-                    maxCount = count;
-                }
-            }
-            Tuple<float, int> result = new Tuple<float, int>(modeAmplitudeValue, maxCount);
-            return result;
         }
 
     }

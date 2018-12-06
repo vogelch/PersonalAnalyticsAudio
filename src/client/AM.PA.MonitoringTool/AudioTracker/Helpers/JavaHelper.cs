@@ -1,4 +1,9 @@
-﻿using System;
+﻿// Created by Christoph Vogel (christoph.vogel@uzh.ch) from the University of Zurich
+// Created: 2018-10-01
+// 
+// Licensed under the MIT License.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -107,14 +112,24 @@ namespace AudioTracker.Helpers
 
             try
             {
-                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                if (File.Exists(@fileName))
                 {
-                    using (var file = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                    {
-                        resource.CopyTo(file);
-                    }
+                    Logger.WriteToConsole("LIUM JAR file already present. Trying to delete it...");
+                    //TODO: delete the file already present and copy it to the folder again (in case there was a new version)
+                    //File.Delete(@fileName);
                 }
-                //TODO: resource exists? file is writable?
+                else
+                {
+                    // this is necessary because there will be a "System.UnauthorizedAccessException" in mscorlib.dll when pausing and resuming...
+                    using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    {
+                        using (var file = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                        {
+                            resource.CopyTo(file);
+                        }
+                    }
+                    //TODO: resource exists? file is writable?
+                }
             }
             catch (Exception e)
             {

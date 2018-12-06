@@ -76,11 +76,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\AmplitudeHelper.cs" />
     <Compile Include="Helpers\AudioDeviceHelper.cs" />
     <Compile Include="Helpers\DeviceChangeNotifier.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Helpers\JavaHelper.cs" />
+    <Compile Include="Models\AmplitudeData.cs" />
+    <Compile Include="Models\AudioDevice.cs" />
     <Compile Include="Models\AudioRecording.cs" />
     <Compile Include="Models\DeviceEvent.cs" />
     <Compile Include="Models\LiumCluster.cs" />

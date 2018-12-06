@@ -17,6 +17,43 @@ namespace AudioTracker.Data
 {
     public class Queries
     {
+        internal static readonly KeyValuePair<string, string>[] AUDIO_RECORDINGS_COLUMN_NAMES = new KeyValuePair<string, string>[]
+        {
+            new KeyValuePair<string, string>("id", "INTEGER PRIMARY KEY"),
+            new KeyValuePair<string, string>("recording_start_time", "DATETIME"),
+            new KeyValuePair<string, string>("recording_end_time", "DATETIME"),
+            // audio device name in use
+            new KeyValuePair<string, string>("filename_mp3", "TEXT"),
+            new KeyValuePair<string, string>("filename_lium", "TEXT"),
+            new KeyValuePair<string, string>("lium_console_output", "TEXT"),
+            new KeyValuePair<string, string>("num_samples", "INTEGER"),
+            new KeyValuePair<string, string>("length_milliseconds", "INTEGER"),
+            new KeyValuePair<string, string>("min_value_relative", "REAL"),
+            new KeyValuePair<string, string>("max_value_relative", "REAL"),
+            new KeyValuePair<string, string>("avg_value_relative", "REAL"),
+            new KeyValuePair<string, string>("mode_value_relative", "REAL"),
+            new KeyValuePair<string, string>("mode_value_occurrences", "REAL"),
+            new KeyValuePair<string, string>("median_value_relative", "REAL"),
+            new KeyValuePair<string, string>("peak_to_peak_level", "REAL"),
+            new KeyValuePair<string, string>("is_mute", "BOOLEAN"),
+            new KeyValuePair<string, string>("storing_timestamp", "DATETIME DEFAULT CURRENT_TIMESTAMP")
+        };
+
+        internal static readonly KeyValuePair<string, string>[] AUDIO_VOLUME_COLUMN_NAMES = new KeyValuePair<string, string>[]
+        {
+            new KeyValuePair<string, string>("id", "INTEGER PRIMARY KEY"),
+            new KeyValuePair<string, string>("audio_timestamp", "DATETIME"),
+            new KeyValuePair<string, string>("rms_relative_value", "REAL"),
+            new KeyValuePair<string, string>("storing_timestamp", "DATETIME DEFAULT CURRENT_TIMESTAMP")
+        };
+
+        internal static readonly KeyValuePair<string, string>[] DEVICE_EVENT_COLUMN_NAMES = new KeyValuePair<string, string>[]
+        {
+            //new KeyValuePair<string, string>("id", "INTEGER PRIMARY KEY"),
+            //new KeyValuePair<string, string>("audio_timestamp", "DATETIME"),
+            //new KeyValuePair<string, string>("rms_relative_value", "REAL"),
+            //new KeyValuePair<string, string>("storing_timestamp", "DATETIME DEFAULT CURRENT_TIMESTAMP")
+        };
 
         private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_TABLE_NAME + " ("
                                                                             + "id INTEGER PRIMARY KEY, "
@@ -24,34 +61,7 @@ namespace AudioTracker.Data
                                                                             + "DATE_OF_SLEEP" + " TEXT UNIQUE, "
                                                                             + "VALUE" + " INTEGER)";
 
-        private static readonly string QUERY_CREATE_AUDIO_RECORDINGS = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_RECORDINGS_TABLE_NAME + " ("
-                                                                            + "id INTEGER PRIMARY KEY, "
-                                                                            + "recording_start_time DATETIME, "
-                                                                            + "recording_end_time DATETIME, "
-                                                                            + "filename_mp3 TEXT, "
-                                                                            + "filename_lium TEXT, "
-                                                                            + "lium_console_output TEXT, "
-                                                                            + "num_samples INTEGER, "
-                                                                            + "length_milliseconds INTEGER, "
-                                                                            + "min_value_relative REAL, "
-                                                                            + "max_value_relative REAL, "
-                                                                            + "avg_value_relative REAL, "
-                                                                            + "mode_value_relative REAL, "
-                                                                            + "mode_value_occurrences REAL, "
-                                                                            + "median_value_relative REAL, "
-                                                                            + "peak_to_peak_level REAL, "
-                                                                            + "is_mute BOOLEAN, "
-                                                                            + "storing_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)";
-
-        private static readonly string QUERY_CREATE_AUDIO_VOLUME = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_VOLUME_TABLE_NAME + " ("
-                                                                            + "id INTEGER PRIMARY KEY, "
-                                                                            + "audio_timestamp DATETIME, "
-                                                                            + "rms_relative_value REAL, "
-                                                                            + "storing_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)";
-
-        //private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.DbTable + " (id INTEGER PRIMARY KEY, time TEXT, tsStart TEXT, tsEnd TEXT, window TEXT, process TEXT);";
         //private static readonly string QUERY_INDEX = "CREATE INDEX IF NOT EXISTS windows_activity_ts_start_idx ON " + Settings.DbTable + " (tsStart);";
-        //private static readonly string QUERY_INSERT = "INSERT INTO " + Settings.DbTable + " (time, tsStart, tsEnd, window, process) VALUES ({0}, {1}, {2}, {3}, {4});";
 
         #region Daemon Queries
         
@@ -72,7 +82,9 @@ namespace AudioTracker.Data
         {
             try
             {
-                var res = Database.GetInstance().ExecuteDefaultQuery(QUERY_CREATE_AUDIO_RECORDINGS);
+                string Columns = GetCreateQueryStringFromArray(AUDIO_RECORDINGS_COLUMN_NAMES);
+                string query = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_RECORDINGS_TABLE_NAME + " (" + Columns + ")";
+                var result = Database.GetInstance().ExecuteDefaultQuery(query);
             }
             catch (Exception e)
             {
@@ -84,12 +96,38 @@ namespace AudioTracker.Data
         {
             try
             {
-                var res = Database.GetInstance().ExecuteDefaultQuery(QUERY_CREATE_AUDIO_VOLUME);
+                string Columns = GetCreateQueryStringFromArray(AUDIO_VOLUME_COLUMN_NAMES);
+                string query = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_RECORDINGS_TABLE_NAME + " (" + Columns + ")";
+                var result = Database.GetInstance().ExecuteDefaultQuery(query);
             }
             catch (Exception e)
             {
                 Logger.WriteToLogFile(e);
             }
+        }
+
+        private static string GetAudioRecordingInsertQuery(AudioRecording newAudioRecording)
+        {
+            string query = "INSERT INTO " + Settings.AUDIO_RECORDINGS_TABLE_NAME +
+                " (recording_start_time, recording_end_time, filename_mp3, filename_lium, lium_console_output, num_samples, " +
+                "length_milliseconds, min_value_relative, max_value_relative, avg_value_relative, mode_value_relative, mode_value_occurrences, " +
+                "median_value_relative, peak_to_peak_level, is_mute) VALUES (" +
+                "'" + newAudioRecording.RecordingStartTime.ToString("yyyy-MM-dd HH:mm:ss.ffff") + "'" + ", " +
+                "'" + newAudioRecording.RecordingEndTime.ToString("yyyy-mm-dd HH:MM:ss.ffff") + "'" + ", " +
+                "'" + newAudioRecording.FilenameMp3 + "'" + ", " +
+                "'" + newAudioRecording.FilenameLium + "'" + ", " +
+                "'" + newAudioRecording.LiumConsoleOutput + "'" + ", " +
+                newAudioRecording.NumSamples + ", " +
+                newAudioRecording.LengthMilliseconds + ", " +
+                newAudioRecording.MinValueRelative + ", " +
+                newAudioRecording.MaxValueRelative + ", " +
+                newAudioRecording.AvgValueRelative + ", " +
+                newAudioRecording.ModeValueRelative + ", " +
+                newAudioRecording.ModeValueOccurrences + ", " +
+                "NULL, " + //newAudioRecording.MedianValueRelative + ", " +
+                "NULL, " + //newAudioRecording.PeakToPeakLevel + ", " +
+                (newAudioRecording.IsMute ? 1 : 0) + ")";
+            return query;
         }
 
         /// <summary>
@@ -98,28 +136,51 @@ namespace AudioTracker.Data
         /// <param name="newAudioRecording">audio recording object with meta data to store into the database</param>
         internal static void StoreAudioRecording(AudioRecording newAudioRecording)
         {
+            //private static readonly string QUERY_INSERT = "INSERT INTO " + Settings.DbTable + " (time, tsStart, tsEnd, window, process) VALUES ({0}, {1}, {2}, {3}, {4});";
             try
             {
-                string query = "INSERT INTO " + Settings.AUDIO_RECORDINGS_TABLE_NAME +
-                    " (recording_start_time, recording_end_time, filename_mp3, filename_lium, lium_console_output, num_samples, " +
-                    "length_milliseconds, min_value_relative, max_value_relative, avg_value_relative, mode_value_relative, mode_value_occurrences, " +
-                    "median_value_relative, peak_to_peak_level, is_mute) VALUES (" + 
-                    "NULL, " + //newAudioRecording.RecordingStartTime.ToString("yyyy-mm-dd HH:MM:SS") + ", " + 
-                    "NULL, " + //newAudioRecording.RecordingEndTime.ToString("yyyy-mm-dd HH:MM:SS") + ", " + 
-                    "'" + newAudioRecording.FilenameMp3 + "'" + ", " +
-                    "'" + newAudioRecording.FilenameLium + "'" + ", " +
-                    "'" + newAudioRecording.LiumConsoleOutput + "'" + ", " +
-                    newAudioRecording.NumSamples + ", " +
-                    newAudioRecording.LengthMilliseconds + ", " +
-                    newAudioRecording.MinValueRelative + ", " +
-                    newAudioRecording.MaxValueRelative + ", " +
-                    newAudioRecording.AvgValueRelative + ", " +
-                    newAudioRecording.ModeValueRelative + ", " +
-                    newAudioRecording.ModeValueOccurrences + ", " + 
-                    "NULL, " + //newAudioRecording.MedianValueRelative + ", " +
-                    "NULL, " + //newAudioRecording.PeakToPeakLevel + ", " +
-                    (newAudioRecording.IsMute ? 1 : 0) + ")";
+                string query = GetAudioRecordingInsertQuery(newAudioRecording);
                 Database.GetInstance().ExecuteDefaultQuery(query);
+                //long? newRowID = Database.GetInstance().ExecuteInsertQuery(query);
+                //Logger.WriteToConsole("Inserted new audio recording with row ID " + newRowID + ".");
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
+        }
+
+        //internal static void StoreAudioRecording(AudioRecording newAudioRecording, LIUMResult newLIUMResult)
+
+
+        internal static void UpdateAllColumnsOfTable(string TableName, KeyValuePair<string, string>[] ColumnNamesAndTypes)
+        {
+            try
+            {
+                if (Database.GetInstance().HasTable(TableName))
+                {
+                    // update columns
+                    foreach (KeyValuePair<string, string> Entry in ColumnNamesAndTypes)
+                    {
+                        try
+                        {
+                            if (!Database.GetInstance().HasTableColumn(TableName, Entry.Key))
+                            {
+                                Database.GetInstance().ExecuteDefaultQuery("ALTER TABLE " + TableName + " ADD COLUMN " + Entry.Key + " " + Entry.Value + ";");
+                                Logger.WriteToConsole("Updating database table '" + TableName + "': inserting column '" + Entry.Key + "'.");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.WriteToLogFile(e);
+                        }
+                    }
+
+                    //TODO: Database.GetInstance().ExecuteDefaultQuery(QUERY_INDEX);
+
+                    //TODO: migrate data
+                    //MigrateWindowsActivityTable();
+                }
             }
             catch (Exception e)
             {
@@ -153,11 +214,13 @@ namespace AudioTracker.Data
                 Logger.WriteToLogFile(e);
             }
         }
+        */
 
+        /*
         /// <summary>
-        /// Updates all entries, sets time -> tsStart and time (of next item) -> tsEnd (or empty if end of the day)
+        /// Updates all entries of the audio recordings table
         /// </summary>
-        private static void MigrateAudioTable()
+        private static void MigrateAudioRecordingsTable()
         {
             try
             {
@@ -205,7 +268,9 @@ namespace AudioTracker.Data
                 Logger.WriteToLogFile(e);
             }
         }
+        */
 
+        /*
         /// <summary>
         /// Saves the timestamp, start and end, process name and window title into the database.
         /// 
@@ -540,5 +605,21 @@ namespace AudioTracker.Data
         */
 
         #endregion
+        
+        private static string GetCreateQueryStringFromArray(KeyValuePair<string, string>[] ColumnNamesAndTypes)
+        {
+            string CreateQueryString = "";
+            foreach (KeyValuePair<string, string> Entry in ColumnNamesAndTypes)
+            {
+                if (CreateQueryString != "")
+                {
+                    CreateQueryString = CreateQueryString + '\n';
+                }
+                CreateQueryString = CreateQueryString + Entry.Key + " " + Entry.Value + ", ";
+            }
+            CreateQueryString = CreateQueryString.Substring(0, CreateQueryString.Length - 2);
+            return CreateQueryString;
+        }
+
     }
 }
