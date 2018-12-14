@@ -21,6 +21,30 @@ namespace WindowsActivityTracker.Visualizations
         private const int TimelineZoomFactor = 1; // shouldn't be 0!, if > 1 then the user can scroll on top of the timeline
         private StringBuilder _sb = new StringBuilder();
 
+        private const string noneColor = "#DDDDDD";
+        private static readonly Dictionary<ActivityCategory, string> ACTIVITIY_CATEGORY_COLOR_PALETTE = new Dictionary<ActivityCategory, string>
+        {
+            { ActivityCategory.DevCode, "#A547D1" }, //"#00b300"; //"#007acb"; // darker blue
+            { ActivityCategory.DevDebug, "#C91BC7" }, //"#8EC4E8"; // fairest blue
+            { ActivityCategory.DevReview, "#D7ADEB" }, //"#1484CE"; //fairest blue
+            { ActivityCategory.DevVc, "#F9D1F8" }, // "#1484CE"; //fairest blue
+            { ActivityCategory.ReadWriteDocument, "#99EBFF" }, //#87CEEB";// "#3258E6";//  "#00b300"; // dark green
+            { ActivityCategory.PlannedMeeting, "#99EBFF" },
+            { ActivityCategory.InformalMeeting, "#12A5F4" }, // "#C91BC7";//"#00cc00"; // fair green
+            { ActivityCategory.InstantMessaging, "#12A5F4" },
+            { ActivityCategory.Planning, "#9DB7E8" }, // "#F9D1F8";//"#e855e8"; // dark violett
+            { ActivityCategory.Email, "#326CCC" }, // "#2858a5";//"#ED77EB"; // fair violett
+            //{ ActivityCategory.WebBrowsing, ""),
+            { ActivityCategory.WorkRelatedBrowsing, "#FF9333" }, //orange "#FFE3CB";//"#FFA500";
+            { ActivityCategory.WorkUnrelatedBrowsing, "#FFC999" }, // "red"; // fair orange
+            { ActivityCategory.FileNavigationInExplorer, "#D3D3D3" }, // light gray
+            { ActivityCategory.Other, "#D3D3D3" },
+            { ActivityCategory.OtherRdp, "#D3D3D3" },
+            { ActivityCategory.Unknown, "gray" },
+            { ActivityCategory.Idle, "white" },
+            { ActivityCategory.Uncategorized, noneColor }
+        };
+
         public DayFragmentationTimeline(DateTimeOffset date)
         {
             this._date = date;
@@ -184,7 +208,7 @@ namespace WindowsActivityTracker.Visualizations
                     times.Append(", 'window_titles': '"); times.Append(ReadableWindowTitles(activityEntry.WindowProcessList));
                     times.Append("', 'processes': '"); times.Append(ReadableProcesses(activityEntry.WindowProcessList));
                     times.Append("', 'color': '"); times.Append(GetHtmlColorForContextCategory(activityEntry.ActivityCategory));
-                    times.Append("', 'activity': '"); times.Append(GetDescriptionForContextCategory(activityEntry.ActivityCategory));
+                    times.Append("', 'activity': '"); times.Append(EnumHelper.GetDescriptionForEnum(activityEntry.ActivityCategory));
                     times.Append("'}, ");
                 }
 
@@ -262,7 +286,8 @@ namespace WindowsActivityTracker.Visualizations
                     </style>";
 
             html += "<div><ul id='legend' align='center'>" // style='width:" + visWidth + "px'
-                   +  categoryList.Where(c => c != ActivityCategory.Idle).Aggregate(string.Empty, (current, cat) => current + ("<li style='color:" + GetHtmlColorForContextCategory(cat) + "'><span>" + GetDescriptionForContextCategory(cat) + "</span></li>"))
+                   +  categoryList.Where(c => c != ActivityCategory.Idle).Aggregate(string.Empty, (current, cat) => 
+                   current + ("<li style='color:" + GetHtmlColorForContextCategory(cat) + "'><span>" + EnumHelper.GetDescriptionForEnum(cat) + "</span></li>"))
                    +  "</ul></div>";
 
             return html;
@@ -293,97 +318,9 @@ namespace WindowsActivityTracker.Visualizations
         /// </summary>
         /// <param name="category"></param>
         /// <returns></returns>
-        private static string GetHtmlColorForContextCategory(ActivityCategory category)
+        internal static string GetHtmlColorForContextCategory(ActivityCategory category)
         {
-            const string noneColor = "#DDDDDD";
-
-            switch (category)
-            {
-                case ActivityCategory.DevCode:
-                    return "#A547D1";//"#6B238E";//"#00b300"; //"#007acb"; // darker blue
-                case ActivityCategory.DevDebug:
-                    return "#C91BC7";//"#8EC4E8"; // fairest blue
-                case ActivityCategory.DevReview:
-                    return "#D7ADEB"; //"#1484CE"; //fairest blue
-                case ActivityCategory.DevVc:
-                    return "#F9D1F8";// "#1484CE"; //fairest blue  
-                case ActivityCategory.ReadWriteDocument:
-                case ActivityCategory.PlannedMeeting:
-                    return "#99EBFF";//#87CEEB";// "#3258E6";//  "#00b300"; // dark green
-                case ActivityCategory.InformalMeeting:
-                case ActivityCategory.InstantMessaging:
-                    return "#12A5F4";// "#C91BC7";//"#00cc00"; // fair green
-                case ActivityCategory.Planning:
-                    return "#9DB7E8"; // "#F9D1F8";//"#e855e8"; // dark violett
-                case ActivityCategory.Email:
-                    return "#326CCC";// "#2858a5";//"#ED77EB"; // fair violett
-                //case ActivityCategory.WebBrowsing:
-                case ActivityCategory.WorkRelatedBrowsing:
-                    return "#FF9333"; //orange "#FFE3CB";//"#FFA500"; 
-                case ActivityCategory.WorkUnrelatedBrowsing:
-                    return "#FFC999"; // "red"; // fair orange
-                case ActivityCategory.FileNavigationInExplorer:
-                    return "#d3d3d3"; // light gray
-                case ActivityCategory.Other:
-                case ActivityCategory.OtherRdp:
-                case ActivityCategory.Unknown:
-                    return "gray";
-                case ActivityCategory.Idle:
-                    return "white";
-                case ActivityCategory.Uncategorized:
-                    return noneColor; 
-            }
-
-            return noneColor; // default color
-        }
-
-        /// <summary>
-        /// Return a screen name for the activity category
-        /// </summary>
-        /// <param name="category"></param>
-        /// <returns></returns>
-        private static string GetDescriptionForContextCategory(ActivityCategory category)
-        {
-            switch (category)
-            {
-                case ActivityCategory.DevCode:
-                    return "Development";
-                case ActivityCategory.DevDebug:
-                    return "Debugger Use";
-                case ActivityCategory.DevVc:
-                    return "Version Control";
-                case ActivityCategory.DevReview:
-                    return "Code Reviewing";
-                case ActivityCategory.ReadWriteDocument:
-                    return "Reading/Editing Documents";
-                case ActivityCategory.InformalMeeting:
-                case ActivityCategory.InstantMessaging:
-                    return "Instant Messaging"; // Ad-Hoc Meeting
-                case ActivityCategory.PlannedMeeting:
-                    return "Scheduled meetings";
-                case ActivityCategory.Planning:
-                    return "Planning";
-                case ActivityCategory.Email:
-                    return "Emails";
-                //case ActivityCategory.WebBrowsing:
-                //    return "Browsing (uncategorized)";
-                case ActivityCategory.WorkRelatedBrowsing:
-                    return "Browsing work-related";// "Work related browsing";
-                case ActivityCategory.WorkUnrelatedBrowsing:
-                    return "Browsing work-unrelated";// "Work un-related browsing";
-                case ActivityCategory.FileNavigationInExplorer:
-                    return "Navigation in File Explorer";
-                case ActivityCategory.Other:
-                    return "Other";
-                case ActivityCategory.Unknown:
-                    return "Uncategorized";
-                case ActivityCategory.OtherRdp:
-                    return "RDP (uncategorized)";
-                case ActivityCategory.Idle:
-                    return "Idle (e.g. break, lunch, meeting)";
-            }
-
-            return "??"; // default color
+            return ACTIVITIY_CATEGORY_COLOR_PALETTE[category];
         }
 
         #endregion

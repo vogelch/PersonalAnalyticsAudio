@@ -33,22 +33,15 @@ using AudioTracker.Models;
 
 namespace AudioTracker
 {
-
-    public enum EventType
-    {
-        INSERTED = 2,
-        REMOVED = 3
-    }
-
     /// <summary>
     /// This tracker stores audio data in the database.
     /// </summary>
     public sealed class Daemon : BaseTrackerDisposable, ITracker
     {
         private bool IsDisposed = false;
-        private System.Timers.Timer _idleCheckTimer;
-        private System.Timers.Timer _idleSleepValidator;
-        private DateTime _previousIdleSleepValidated = DateTime.MinValue;
+        //private System.Timers.Timer _idleCheckTimer;
+        //private System.Timers.Timer _idleSleepValidator;
+        //private DateTime _previousIdleSleepValidated = DateTime.MinValue;
 
         private System.Timers.Timer checkAudioDeviceTimer;
         private bool _isConnectedAudioDevice = false;
@@ -59,7 +52,6 @@ namespace AudioTracker
         private NotifyIcon NotificationHandle;
 
         // audio device and recording
-        public MMDevice inputAudioDevice { get; set; } //TODO: look into access modifier
         private WaveIn waveSource = null;
         private int lastNumberOfAudioDevices = 0;
         private int lastNumberOfAudioDevicesTick = 0;
@@ -78,7 +70,6 @@ namespace AudioTracker
             {
                 Name += " (with raw recording)";
             }
-            inputAudioDevice = null;
         }
 
         protected override void Dispose(bool disposing)
@@ -87,124 +78,12 @@ namespace AudioTracker
             {
                 if (disposing)
                 {
-                    _idleCheckTimer.Dispose();
-                    _idleSleepValidator.Dispose();
+                    //_idleCheckTimer.Dispose();
+                    //_idleSleepValidator.Dispose();
                 }
                 IsDisposed = true;
             }
             base.Dispose(disposing);
-        }
-
-        internal void DeviceNotificationHandler(Message msg)
-        {
-            Logger.WriteToConsole("Device change event LParam: " + msg.LParam); // 0    depends on Wparam; set to zero for DBT_DEVNODES_CHANGED
-            Logger.WriteToConsole("Device change event HWnd: " + msg.HWnd); // A handle to the window.
-            Logger.WriteToConsole("Device change event Msg: " + msg.Msg); // 537 = WM_DEVICECHANGE
-            Logger.WriteToConsole("Device change event Result: " + msg.Result);
-            Logger.WriteToConsole("Device change event WParam: " + msg.WParam);
-
-            const int WPARAM_DEVICE_CHANGE_EVENT = 0x0219; // 537 = WM_DEVICECHANGE
-            const int WPARAM_DEVICE_NODE_CHANGED = 0x0007; // 7 = DBT_DEVNODES_CHANGED     A device has been added to or removed from the system.
-            const int WPARAM_DEVICE_REMOVE_COMPLETE = 0x8004; // 32772 =       A device or piece of media has been removed.
-            const int WPARAM_DEVICE_ARRIVAL = 0x8000; // 32768 = DBT_DEVICEARRIVAL             A device or piece of media has been inserted and is now available.
-
-            if (msg.Msg == WPARAM_DEVICE_CHANGE_EVENT)
-            {
-                int wparamAsInt = msg.WParam.ToInt32();
-                if (wparamAsInt == WPARAM_DEVICE_NODE_CHANGED)
-                {
-                    if (Settings.InputAudioDevice != null)
-                    {
-                        // If an audio device is currently correctly connected, check if current audio device is still connected
-                        MMDeviceCollection AudioDevices = AudioDeviceHelper.GetActiveInputDevicesCollection();
-                        if (!AudioDevices.Contains(Settings.InputAudioDevice.DeviceInstance))
-                        {
-                            Settings.InputAudioDevice = null;
-                            if (Settings.IS_DEVICE_EVENT_NOTIFICATION_ENABLED)
-                            {
-                                Logger.WriteToConsole("Warning: The audio device currently in use has been unplugged!");
-                                var msg1 = new Exception("Warning: The audio device currently in use has been unplugged!");
-                                Logger.WriteToLogFile(msg1);
-                                NotificationHandle = new NotifyIcon();
-                                NotificationHandle.BalloonTipTitle = "PersonalAnalytics: Audio device removed!";
-                                NotificationHandle.BalloonTipText = "The microphone used by the audio tracker was removed. Audio recording has been stopped. Personal Analytics will try to automatically resume recording on reconnect."; // ": Audio device " + inputAudioDevice.DeviceFriendlyName + " was removed.";
-                                NotificationHandle.Icon = SystemIcons.Exclamation;
-                                NotificationHandle.BalloonTipClosed += (sender, e) => { var thisIcon = (NotifyIcon)sender; thisIcon.Visible = false; thisIcon.Dispose(); };
-                                NotificationHandle.Text = Name + ": Audio device removed!";
-                                NotificationHandle.Visible = true;
-                                NotificationHandle.ShowBalloonTip(5000);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Thread.Sleep(500);
-                        MMDeviceCollection AudioDevices = AudioDeviceHelper.GetActiveInputDevicesCollection();
-                        List<string> AudioDeviceNames = new List<string>();
-                        foreach (MMDevice CurrentDevice in AudioDevices)
-                        {
-                            Logger.WriteToConsole("Current audio device: " + CurrentDevice.DeviceFriendlyName);
-                            AudioDeviceNames.Add(CurrentDevice.DeviceFriendlyName);
-                        }
-                        Logger.WriteToConsole("Checking whether the changed device was the previously removed audio device...");
-                        Logger.WriteToConsole("Last device name: " + LastInputAudioDevice.FriendlyName);
-                        if (AudioDeviceNames.Contains(LastInputAudioDevice.FriendlyName))
-                        {
-                            Logger.WriteToConsole("The previously disconnected audio device has been plugged in again. Trying to resume recording...");
-                            var msg2 = new Exception("The previously disconnected audio device has been plugged in again. Trying to resume recording...");
-                            Logger.WriteToLogFile(msg2);
-                            // TODO: set the audio device again as the current audio device
-                            /*
-                            Settings.InputAudioDevice = AudioDeviceHelper.GetDeviceFromDeviceName(LastInputAudioDeviceName);
-                            Settings.InputAudioDeviceName = Settings.InputAudioDevice.DeviceFriendlyName;
-                            Settings.InputAudioDeviceNumber = AudioDeviceHelper.GetDeviceNumberFromDeviceName(Settings.InputAudioDeviceName);
-                            */
-                            //TODO: show a message again at this point which tells the user that recording resumes?
-                            StopAudioRecording();
-                            StartAudioRecording();
-                        }
-                    }
-
-                    /*
-                    int currentNumberOfAudioDevices = WaveIn.DeviceCount;
-                    Logger.WriteToConsole("current: " + currentNumberOfAudioDevices + " / last: " + lastNumberOfAudioDevices);
-                    if (currentNumberOfAudioDevices > lastNumberOfAudioDevices)
-                    {
-                        lastNumberOfAudioDevices = currentNumberOfAudioDevices;
-                        Logger.WriteToConsole("An audio device has been added.");
-                    }
-                    else if (currentNumberOfAudioDevices < lastNumberOfAudioDevices)
-                    {
-                        lastNumberOfAudioDevices = currentNumberOfAudioDevices;
-                        Logger.WriteToConsole("An audio device has been removed.");
-                        // check if the removed audio device was the device currently in use
-
-                        if (Settings.IS_DEVICE_EVENT_NOTIFICATION_ENABLED)
-                        {
-                            Logger.WriteToConsole("Showing warning balloon tip...");
-                            NotificationHandle = new NotifyIcon();
-                            NotificationHandle.BalloonTipTitle = "PersonalAnalytics: Audio device removed!";
-                            NotificationHandle.BalloonTipText = "The microphone used by the audio tracker was removed. Audio recording has been stopped. Personal Analytics will try to automatically resume recording on reconnect."; // ": Audio device " + inputAudioDevice.DeviceFriendlyName + " was removed.";
-                            NotificationHandle.Icon = SystemIcons.Exclamation;
-                            NotificationHandle.Text = Name + ": Audio device removed!";
-                            NotificationHandle.Visible = true;
-                            NotificationHandle.ShowBalloonTip(5000);
-                        }
-                    }
-                    else
-                    {
-                        Logger.WriteToConsole("Changed device was not an audio device.");
-                    }
-                    */
-                }
-            }
-
-            if (Settings.IS_DEVICE_EVENT_RECORDING_ENABLED)
-            {
-                //TODO: store device event in database
-                //DatabaseConnector.AddHeartMeasurementsToDatabase(measurements, false);
-            }
-
         }
 
         public override void Start()
@@ -271,171 +150,6 @@ namespace AudioTracker
 
         }
 
-        private async void CheckAudioDeviceTick(object sender, EventArgs e)
-        {
-            Logger.WriteToConsole("Tick!");
-            /*
-            MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
-            MMDeviceCollection AudioDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
-            int currentNumberOfAudioDevices = WaveIn.DeviceCount;
-            Logger.WriteToConsole("current: " + currentNumberOfAudioDevices + " / last: " + lastNumberOfAudioDevicesTick);
-            if (currentNumberOfAudioDevices > lastNumberOfAudioDevicesTick)
-            {
-                lastNumberOfAudioDevicesTick = currentNumberOfAudioDevices;
-                Logger.WriteToConsole("An audio device has been added.");
-                var msg = new Exception("An audio device has been added.");
-                Logger.WriteToLogFile(msg);
-
-                //TODO: check if it is the same device which was removed
-
-                StopAudioRecording();
-                StartAudioRecording();
-            }
-            else if (currentNumberOfAudioDevices < lastNumberOfAudioDevicesTick)
-            {
-                lastNumberOfAudioDevicesTick = currentNumberOfAudioDevices;
-                Logger.WriteToConsole("An audio device has been removed.");
-            }
-            else
-            {
-                Logger.WriteToConsole("Changed device was not an audio device.");
-            }
-            */
-        }
-
-        private void StartAudioRecording()
-        {
-            //TODO: return value should be boolean
-            LastInputAudioDevice = Settings.InputAudioDevice;
-
-            waveSource = new WaveIn(WaveCallbackInfo.FunctionCallback());
-            try
-            {
-                //TODO: check whether audio device has changed since startup
-                //AudioDeviceHelper.GetAudioDeviceFromDeviceNumber(Settings.inputAudioDeviceNumber);
-                //Settings.inputAudioDevice = AudioDeviceHelper.GetDeviceNumberFromDeviceName(Settings.inputAudioDeviceName);
-                waveSource.DeviceNumber = (int)Settings.InputAudioDevice.DeviceNumber; //TODO: null check!
-                Database.GetInstance().LogInfo("AudioTracker: Audio input device number selected at start of recording: " + Settings.InputAudioDevice.DeviceNumber);
-                waveSource.WaveFormat = new WaveFormat(Settings.RecordingSampleRate, Settings.RecordingNumberOfChannels);
-                waveSource.BufferMilliseconds = Settings.AudioRecordingChunkLength;
-                waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
-                waveSource.RecordingStopped += new EventHandler<NAudio.Wave.StoppedEventArgs>(waveSource_RecordingStopped);
-                startOfCurrentRecording = DateTime.Now;
-                waveSource.StartRecording();
-
-                var msg = new Exception("Audio recording has started.");
-                Logger.WriteToLogFile(msg);
-                Database.GetInstance().LogInfo("AudioTracker: Audio recording has started.");
-            }
-            catch (Exception e)
-            {
-                Logger.WriteToLogFile(e);
-            }
-        }
-
-        private void StopAudioRecording()
-        {
-            // TODO: return value should be boolean
-            if (waveSource != null)
-            {
-                waveSource.StopRecording();
-            }
-        }
-
-        void waveSource_DataAvailable(object sender, WaveInEventArgs e)
-        {
-            DateTime endOfThisRecording = DateTime.Now;
-            DateTime startOfThisRecording = startOfCurrentRecording;
-            startOfCurrentRecording = endOfThisRecording;
-            try
-            {
-                string fileNameDateTime = DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss");
-                string audioFilename = Shared.Settings.ExportFilePath + "\\" + Settings.RecordingFileNamePrefix + "-" + fileNameDateTime + ".wav";
-                WaveFileWriter waveFile = new WaveFileWriter(audioFilename, waveSource.WaveFormat);
-                waveFile.Write(e.Buffer, 0, e.BytesRecorded);
-
-                // Calculate loudness and check whether microphone is (probably) muted
-                double[] relativeAmplitudes = AmplitudeHelper.GetRelativeAmplitudes(e.Buffer, e.BytesRecorded);
-                List<AmplitudeData> newAmplitudeDataList = AmplitudeHelper.GetAmplitudeData(e.Buffer, e.BytesRecorded, 30000);
-                AmplitudeData newAmplitudeData = newAmplitudeDataList.ToArray()[0];
-                bool isMicrophoneProbablyMuted = AmplitudeHelper.IsMicrophoneProbablyMuted(newAmplitudeData);
-
-                //Logger.WriteToConsole("Device name: " + inputAudioDevice.DeviceFriendlyName);  <- throws an exception
-                //Logger.WriteToConsole("Device mute: " + inputAudioDevice.AudioEndpointVolume.VolumeRange); // inputAudioDevice.AudioEndpointVolume.Mute.ToString()
-                int lengthOfRecording = (int)(1000 * waveFile.Length / waveFile.WaveFormat.AverageBytesPerSecond);
-                if (lengthOfRecording != Settings.AudioRecordingChunkLength)
-                {
-                    var msg = new Exception("Recording of audio segment has stopped early (after " + lengthOfRecording  + " milliseconds).");
-                    Logger.WriteToLogFile(msg);
-                    Database.GetInstance().LogWarning("AudioTracker: Recording of audio segment has stopped early (after " + lengthOfRecording + " milliseconds).");
-                    if (isPaused)
-                    {
-                        Logger.WriteToConsole("PersonalAnalytics was paused.");
-                    }
-                    else
-                    {
-                        lastAbnormalRecordingAbort = DateTime.Now;
-                        Logger.WriteToConsole("PersonalAnalytics recording aborted abnormally!");
-                    }
-                    //..
-                }
-                waveFile.Close();
-                waveFile.Dispose();
-                waveFile = null;
-
-                //save as MP3 file if raw recording option is enabled
-                string audioFilenameMp3 = null;
-                if (Settings.IS_RAW_RECORDING_ENABLED) // TODO: this check should not be here
-                {
-                    audioFilenameMp3 = Settings.RecordingFileNamePrefix + "-" + fileNameDateTime + ".mp3";
-                    string audioFilePathMp3 = Shared.Settings.ExportFilePath + "\\" + audioFilenameMp3;
-                    ConvertWavToMp3(audioFilename, audioFilePathMp3);
-                }
-
-                // start analysis of new audio chunk
-                string outputFileName = "lium-" + fileNameDateTime + ".seg";
-                string outputFilePath = Shared.Settings.ExportFilePath + "\\" + outputFileName;
-                string liumConsoleOutput = liumAnalysis(audioFilename, outputFilePath);
-
-                //store audio recording meta data into database
-                AudioRecording newAudioRecording = new AudioRecording(startOfThisRecording, endOfThisRecording, audioFilenameMp3, outputFileName, liumConsoleOutput, 0, lengthOfRecording,
-                    newAmplitudeData.MinValue, newAmplitudeData.MaxValue, newAmplitudeData.AvgValue, newAmplitudeData.ModeValue, newAmplitudeData.ModeOccurrences, 0.0, 0.0, isMicrophoneProbablyMuted);
-                Queries.StoreAudioRecording(newAudioRecording);
-
-                //store amplitude data into database
-                //TODO...
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteToLogFile(ex);
-                // catch System.IO.IOException
-                if (IsDiskFull(ex))
-                {
-                    Database.GetInstance().LogError("AudioTracker: Could not save recording to file because there was not enough disk space. " + ex.Message);
-
-                }
-                else
-                {
-                    Database.GetInstance().LogError(ex.Message);
-                }
-            }
-
-        }
-
-        void waveSource_RecordingStopped(object sender, EventArgs e)
-        {
-            //TODO: remove abuse of log file and store result solely in database log table
-            var msg = new Exception("Audio recording has stopped. Event args: " + e.ToString());
-            Logger.WriteToLogFile(msg);
-            Database.GetInstance().LogInfo("AudioTracker: Audio recording has stopped.");
-
-            if (waveSource != null)
-            {
-                waveSource.Dispose();
-                waveSource = null;
-            }
-        }
-
         public override void Stop()
         {
             var msg = new Exception("Daemon stop called.");
@@ -443,7 +157,6 @@ namespace AudioTracker
             Database.GetInstance().LogInfo("AudioTracker: Daemon stop called.");
 
             isPaused = true;
-
             //TODO: properly delete potentially remaining .wav files at shutdown
 
             try
@@ -451,36 +164,29 @@ namespace AudioTracker
                 // stop device change notifier
                 //DeviceChangeNotifier.Stop();
 
-                //checkAudioDeviceTimer = null;
-                //checkAudioDeviceTimer.Dispose();
-
-                // Unregister idle time checker Timer
-                if (_idleCheckTimer != null)
+                // Unregister audio device time checker Timer
+                /*
+                if (checkAudioDeviceTimer != null)
                 {
-                    _idleCheckTimer.Stop();
-                    _idleCheckTimer.Dispose();
-                    _idleCheckTimer = null;
+                    checkAudioDeviceTimer.Stop();
+                    checkAudioDeviceTimer.Dispose();
+                    checkAudioDeviceTimer = null;
                 }
-
-                // Unregister idle resume validator Timer
-                if (_idleSleepValidator != null)
-                {
-                    _idleSleepValidator.Stop();
-                    _idleSleepValidator.Dispose();
-                    _idleSleepValidator = null;
-                }
+                */
 
                 // Stop audio recording
                 StopAudioRecording();
                 if (waveSource != null)
                 {
+                    waveSource.StopRecording();
                     waveSource.Dispose();
                     waveSource = null;
                 }
 
-                // Dispose NotificationHandle is necessary
+                // Dispose NotificationHandle if necessary
                 if (NotificationHandle != null)
                 {
+                    NotificationHandle.Visible = false;
                     NotificationHandle.Dispose();
                     NotificationHandle = null;
                 }
@@ -558,6 +264,182 @@ namespace AudioTracker
         }
 
         #endregion
+
+        private async void CheckAudioDeviceTick(object sender, EventArgs e)
+        {
+            Logger.WriteToConsole("Tick!");
+            /*
+            MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
+            MMDeviceCollection AudioDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+            int currentNumberOfAudioDevices = WaveIn.DeviceCount;
+            Logger.WriteToConsole("current: " + currentNumberOfAudioDevices + " / last: " + lastNumberOfAudioDevicesTick);
+            if (currentNumberOfAudioDevices > lastNumberOfAudioDevicesTick)
+            {
+                lastNumberOfAudioDevicesTick = currentNumberOfAudioDevices;
+                Logger.WriteToConsole("An audio device has been added.");
+                var msg = new Exception("An audio device has been added.");
+                Logger.WriteToLogFile(msg);
+
+                //TODO: check if it is the same device which was removed
+
+                StopAudioRecording();
+                StartAudioRecording();
+            }
+            else if (currentNumberOfAudioDevices < lastNumberOfAudioDevicesTick)
+            {
+                lastNumberOfAudioDevicesTick = currentNumberOfAudioDevices;
+                Logger.WriteToConsole("An audio device has been removed.");
+            }
+            else
+            {
+                Logger.WriteToConsole("Changed device was not an audio device.");
+            }
+            */
+        }
+
+        private bool StartAudioRecording()
+        {
+            LastInputAudioDevice = Settings.InputAudioDevice;
+
+            waveSource = new WaveIn(WaveCallbackInfo.FunctionCallback());
+            try
+            {
+                //TODO: check whether audio device has changed since startup
+                waveSource.DeviceNumber = (int)Settings.InputAudioDevice.DeviceNumber; //TODO: null check!
+                Database.GetInstance().LogInfo("AudioTracker: Audio input device number selected at start of recording: " + Settings.InputAudioDevice.DeviceNumber);
+                waveSource.WaveFormat = new WaveFormat(Settings.RecordingSampleRate, Settings.RecordingNumberOfChannels);
+                waveSource.BufferMilliseconds = Settings.AudioRecordingChunkLength;
+                waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
+                waveSource.RecordingStopped += new EventHandler<NAudio.Wave.StoppedEventArgs>(waveSource_RecordingStopped);
+                startOfCurrentRecording = DateTime.Now;
+                waveSource.StartRecording();
+
+                var msg = new Exception("Audio recording has started.");
+                Logger.WriteToLogFile(msg);
+                Database.GetInstance().LogInfo("AudioTracker: Audio recording has started.");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+                return false;
+            }
+        }
+
+        private bool StopAudioRecording()
+        {
+            try
+            {
+                if (waveSource != null)
+                {
+                    waveSource.StopRecording();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+                return false;
+            }
+        }
+
+        void waveSource_DataAvailable(object sender, WaveInEventArgs e)
+        {
+            DateTime endOfThisRecording = DateTime.Now;
+            DateTime startOfThisRecording = startOfCurrentRecording;
+            startOfCurrentRecording = endOfThisRecording;
+            try
+            {
+                string fileNameDateTime = DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss");
+                string audioFilename = Shared.Settings.ExportFilePath + "\\" + Settings.RecordingFileNamePrefix + "-" + fileNameDateTime + ".wav";
+                WaveFileWriter waveFile = new WaveFileWriter(audioFilename, waveSource.WaveFormat);
+                waveFile.Write(e.Buffer, 0, e.BytesRecorded);
+
+                // Calculate loudness and check whether microphone is (probably) muted
+                double[] relativeAmplitudes = AmplitudeHelper.GetRelativeAmplitudes(e.Buffer, e.BytesRecorded);
+                List<AmplitudeData> newAmplitudeDataList = AmplitudeHelper.GetAmplitudeData(e.Buffer, e.BytesRecorded, 30000);
+                AmplitudeData newAmplitudeData = newAmplitudeDataList.ToArray()[0];
+                bool isMicrophoneProbablyMuted = AmplitudeHelper.IsMicrophoneProbablyMuted(newAmplitudeData);
+
+                //Logger.WriteToConsole("Device name: " + inputAudioDevice.DeviceFriendlyName);  <- throws an exception
+                //Logger.WriteToConsole("Device mute: " + inputAudioDevice.AudioEndpointVolume.VolumeRange); // inputAudioDevice.AudioEndpointVolume.Mute.ToString()
+                int lengthOfRecording = (int)(1000 * waveFile.Length / waveFile.WaveFormat.AverageBytesPerSecond);
+                if (lengthOfRecording != Settings.AudioRecordingChunkLength)
+                {
+                    var msg = new Exception("Recording of audio segment has stopped early (after " + lengthOfRecording + " milliseconds).");
+                    Logger.WriteToLogFile(msg);
+                    Database.GetInstance().LogWarning("AudioTracker: Recording of audio segment has stopped early (after " + lengthOfRecording + " milliseconds).");
+                    if (isPaused)
+                    {
+                        Logger.WriteToConsole("PersonalAnalytics was paused.");
+                    }
+                    else
+                    {
+                        lastAbnormalRecordingAbort = DateTime.Now;
+                        Logger.WriteToConsole("PersonalAnalytics recording aborted abnormally!");
+                    }
+                    //..
+                }
+                waveFile.Close();
+                waveFile.Dispose();
+                waveFile = null;
+
+                //save as MP3 file if raw recording option is enabled
+                string audioFilenameMp3 = null;
+                if (Settings.IS_RAW_RECORDING_ENABLED)
+                {
+                    audioFilenameMp3 = Settings.RecordingFileNamePrefix + "-" + fileNameDateTime + ".mp3";
+                    string audioFilePathMp3 = Shared.Settings.ExportFilePath + "\\" + audioFilenameMp3;
+                    ConvertWavToMp3(audioFilename, audioFilePathMp3);
+                }
+
+                // start analysis of new audio chunk
+                string outputFileName = "lium-" + fileNameDateTime + ".seg";
+                string outputFilePath = Shared.Settings.ExportFilePath + "\\" + outputFileName;
+                string liumConsoleOutput = liumAnalysis(audioFilename, outputFilePath);
+
+                //store audio recording meta data into database
+                AudioRecording newAudioRecording = new AudioRecording(startOfThisRecording, endOfThisRecording, audioFilenameMp3, outputFileName, liumConsoleOutput, 0, lengthOfRecording,
+                    newAmplitudeData.MinValue, newAmplitudeData.MaxValue, newAmplitudeData.AvgValue, newAmplitudeData.ModeValue, newAmplitudeData.ModeOccurrences, 0.0, 0.0, isMicrophoneProbablyMuted);
+                Queries.StoreAudioRecording(newAudioRecording);
+
+                //store amplitude data into database
+                //TODO: implement
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToLogFile(ex);
+                // catch System.IO.IOException
+                if (IsDiskFull(ex))
+                {
+                    Database.GetInstance().LogError("AudioTracker: Could not save recording to file because there was not enough disk space. " + ex.Message);
+
+                }
+                else
+                {
+                    Database.GetInstance().LogError(ex.Message);
+                }
+            }
+
+        }
+
+        void waveSource_RecordingStopped(object sender, EventArgs e)
+        {
+            //TODO: remove abuse of log file and store result solely in database log table
+            var msg = new Exception("Audio recording has stopped (waveSource_RecordingStopped).");
+            Logger.WriteToLogFile(msg);
+            Database.GetInstance().LogInfo("AudioTracker: Audio recording has stopped.");
+
+            if (waveSource != null)
+            {
+                waveSource.Dispose();
+                waveSource = null;
+            }
+        }
 
         /// <summary>
         /// Starts Java application with LIUM.jar to analyse last n minutes of audio (without showing window)
@@ -681,13 +563,6 @@ namespace AudioTracker
             }
         }
 
-        /*
-        private LiumResult parseLiumConsoleOutput(String consoleOutput)
-        {
-            ...
-        }
-        */
-
         private List<LiumCluster> ParseLiumClustersFromFile(string LiumInputFileName)
         {
             const int LIUM_FEATURE_LENGTH = 10; // in milliseconds, i.e. 3000 features for a 30 seconds recording //TODO: move to settings or to model
@@ -727,6 +602,126 @@ namespace AudioTracker
             return ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL;
         }
 
+        internal void DeviceNotificationHandler(Message msg)
+        {
+            Logger.WriteToConsole("Device change event LParam: " + msg.LParam); // 0    depends on Wparam; set to zero for DBT_DEVNODES_CHANGED
+            Logger.WriteToConsole("Device change event HWnd: " + msg.HWnd); // A handle to the window.
+            Logger.WriteToConsole("Device change event Msg: " + msg.Msg); // 537 = WM_DEVICECHANGE
+            Logger.WriteToConsole("Device change event Result: " + msg.Result);
+            Logger.WriteToConsole("Device change event WParam: " + msg.WParam);
+
+            const int WPARAM_DEVICE_CHANGE_EVENT = 0x0219; // 537 = WM_DEVICECHANGE
+            const int WPARAM_DEVICE_NODE_CHANGED = 0x0007; // 7 = DBT_DEVNODES_CHANGED     A device has been added to or removed from the system.
+            const int WPARAM_DEVICE_REMOVE_COMPLETE = 0x8004; // 32772 =       A device or piece of media has been removed.
+            const int WPARAM_DEVICE_ARRIVAL = 0x8000; // 32768 = DBT_DEVICEARRIVAL             A device or piece of media has been inserted and is now available.
+
+            if (msg.Msg == WPARAM_DEVICE_CHANGE_EVENT)
+            {
+                int wparamAsInt = msg.WParam.ToInt32();
+                if (wparamAsInt == WPARAM_DEVICE_NODE_CHANGED)
+                {
+                    if (Settings.InputAudioDevice != null)
+                    {
+                        // If an audio device is currently correctly connected, check if current audio device is still connected
+                        MMDeviceCollection AudioDevices = AudioDeviceHelper.GetActiveInputDevicesCollection();
+                        if (!AudioDevices.Contains(Settings.InputAudioDevice.DeviceInstance))
+                        {
+                            Settings.InputAudioDevice = null;
+                            if (Settings.IS_DEVICE_EVENT_NOTIFICATION_ENABLED)
+                            {
+                                Logger.WriteToConsole("Warning: The audio device currently in use has been unplugged!");
+                                var msg1 = new Exception("Warning: The audio device currently in use has been unplugged!");
+                                Logger.WriteToLogFile(msg1);
+                                /*
+                                NotificationHandle = new NotifyIcon();
+                                NotificationHandle.BalloonTipTitle = "PersonalAnalytics: Audio device removed!";
+                                NotificationHandle.BalloonTipText = "The microphone used by the audio tracker was removed. Audio recording has been stopped. Personal Analytics will try to automatically resume recording on reconnect."; // ": Audio device " + inputAudioDevice.DeviceFriendlyName + " was removed.";
+                                NotificationHandle.Icon = SystemIcons.Exclamation;
+                                NotificationHandle.BalloonTipClosed += (sender, e) => { var thisIcon = (NotifyIcon)sender; thisIcon.Visible = false; thisIcon.Dispose(); };
+                                NotificationHandle.Text = Name + ": Audio device removed!";
+                                NotificationHandle.Visible = true;
+                                NotificationHandle.ShowBalloonTip(5000);
+                                */
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Thread.Sleep(500);
+                        MMDeviceCollection AudioDevices = AudioDeviceHelper.GetActiveInputDevicesCollection();
+                        List<string> AudioDeviceNames = new List<string>();
+                        foreach (MMDevice CurrentDevice in AudioDevices)
+                        {
+                            Logger.WriteToConsole("Current audio device: " + CurrentDevice.DeviceFriendlyName);
+                            AudioDeviceNames.Add(CurrentDevice.DeviceFriendlyName);
+                        }
+                        Logger.WriteToConsole("Checking whether the changed device was the previously removed audio device...");
+                        Logger.WriteToConsole("Last device name: " + LastInputAudioDevice.FriendlyName);
+                        if (AudioDeviceNames.Contains(LastInputAudioDevice.FriendlyName))
+                        {
+                            Logger.WriteToConsole("The previously disconnected audio device has been plugged in again. Trying to resume recording...");
+                            var msg2 = new Exception("The previously disconnected audio device has been plugged in again. Trying to resume recording...");
+                            Logger.WriteToLogFile(msg2);
+                            // TODO: set the audio device again as the current audio device
+                            /*
+                            Settings.InputAudioDevice = AudioDeviceHelper.GetDeviceFromDeviceName(LastInputAudioDeviceName);
+                            Settings.InputAudioDeviceName = Settings.InputAudioDevice.DeviceFriendlyName;
+                            Settings.InputAudioDeviceNumber = AudioDeviceHelper.GetDeviceNumberFromDeviceName(Settings.InputAudioDeviceName);
+                            */
+                            //TODO: show a message again at this point which tells the user that recording resumes?
+                            StopAudioRecording();
+                            StartAudioRecording();
+                        }
+                    }
+
+                    /*
+                    int currentNumberOfAudioDevices = WaveIn.DeviceCount;
+                    Logger.WriteToConsole("current: " + currentNumberOfAudioDevices + " / last: " + lastNumberOfAudioDevices);
+                    if (currentNumberOfAudioDevices > lastNumberOfAudioDevices)
+                    {
+                        lastNumberOfAudioDevices = currentNumberOfAudioDevices;
+                        Logger.WriteToConsole("An audio device has been added.");
+                    }
+                    else if (currentNumberOfAudioDevices < lastNumberOfAudioDevices)
+                    {
+                        lastNumberOfAudioDevices = currentNumberOfAudioDevices;
+                        Logger.WriteToConsole("An audio device has been removed.");
+                        // check if the removed audio device was the device currently in use
+
+                        if (Settings.IS_DEVICE_EVENT_NOTIFICATION_ENABLED)
+                        {
+                            Logger.WriteToConsole("Showing warning balloon tip...");
+                            NotificationHandle = new NotifyIcon();
+                            NotificationHandle.BalloonTipTitle = "PersonalAnalytics: Audio device removed!";
+                            NotificationHandle.BalloonTipText = "The microphone used by the audio tracker was removed. Audio recording has been stopped. Personal Analytics will try to automatically resume recording on reconnect."; // ": Audio device " + inputAudioDevice.DeviceFriendlyName + " was removed.";
+                            NotificationHandle.Icon = SystemIcons.Exclamation;
+                            NotificationHandle.Text = Name + ": Audio device removed!";
+                            NotificationHandle.Visible = true;
+                            NotificationHandle.ShowBalloonTip(5000);
+                        }
+                    }
+                    else
+                    {
+                        Logger.WriteToConsole("Changed device was not an audio device.");
+                    }
+                    */
+                }
+            }
+
+            if (Settings.IS_DEVICE_EVENT_RECORDING_ENABLED)
+            {
+                //TODO: store device event in database
+                //DatabaseConnector.AddHeartMeasurementsToDatabase(measurements, false);
+            }
+
+        }
+
+    }
+
+    public enum EventType
+    {
+        INSERTED = 2,
+        REMOVED = 3
     }
 
 }

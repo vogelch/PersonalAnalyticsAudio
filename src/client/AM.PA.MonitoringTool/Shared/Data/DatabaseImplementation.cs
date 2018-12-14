@@ -792,6 +792,24 @@ namespace Shared.Data
             }
         }
 
+        /// <summary>
+        /// Creates create query from an array of column names and types given as key-value pairs
+        /// </summary>
+        public static string GetCreateQueryStringFromArray(KeyValuePair<string, string>[] ColumnNamesAndTypes)
+        {
+            string CreateQueryString = "";
+            foreach (KeyValuePair<string, string> Entry in ColumnNamesAndTypes)
+            {
+                if (CreateQueryString != "")
+                {
+                    CreateQueryString = CreateQueryString + '\n';
+                }
+                CreateQueryString = CreateQueryString + Entry.Key + " " + Entry.Value + ", ";
+            }
+            CreateQueryString = CreateQueryString.Substring(0, CreateQueryString.Length - 2);
+            return CreateQueryString;
+        }
+
         #endregion
 
         #region TimeZone Tracking

@@ -20,6 +20,7 @@ using Microsoft.Win32;
 using System.Reflection;
 using System.Linq;
 using WindowsActivityTracker.Models;
+using WindowsActivityTracker.Views;
 
 namespace WindowsActivityTracker
 {
@@ -151,11 +152,20 @@ namespace WindowsActivityTracker
         public override void CreateDatabaseTablesIfNotExist()
         {
             Queries.CreateWindowsActivityTable();
+            Queries.CreateActivityCategoryReferenceTable();
         }
 
         public override void UpdateDatabaseTables(int version)
         {
             Queries.UpdateDatabaseTables(version);
+        }
+
+        //TODO: implement
+        //public override bool IsFirstStart => !Database.GetInstance().HasSetting("WindowActivityTrackerEnabled");
+
+        public override List<IFirstStartScreen> GetStartScreens()
+        {
+            return new List<IFirstStartScreen>() { new FirstStartScreen() };
         }
 
         public override bool IsEnabled()
@@ -220,7 +230,8 @@ namespace WindowsActivityTracker
             if (tmpPreviousEntry != null)
             {
                 tmpPreviousEntry.TsEnd = DateTime.Now;
-                Queries.InsertSnapshot(tmpPreviousEntry);
+                //Queries.InsertSnapshot(tmpPreviousEntry);
+                Queries.InsertIntoDatabase(tmpPreviousEntry, Settings.IsStoreWindowTitle, Settings.IsStoreProcess);
             }
         }
 
@@ -248,7 +259,8 @@ namespace WindowsActivityTracker
             _previousEntry = new WindowsActivityEntry(DateTime.Now, DateTime.Now, windowTitle, process, IntPtr.Zero); // tsEnd is right now
 
             // set store current entry
-            Queries.InsertSnapshot(_previousEntry);
+            //Queries.InsertSnapshot(_previousEntry);
+            Queries.InsertIntoDatabase(_previousEntry, Settings.IsStoreWindowTitle, Settings.IsStoreProcess);
         }
 
         #endregion

@@ -82,7 +82,7 @@ namespace AudioTracker.Data
         {
             try
             {
-                string Columns = GetCreateQueryStringFromArray(AUDIO_RECORDINGS_COLUMN_NAMES);
+                string Columns = DatabaseImplementation.GetCreateQueryStringFromArray(AUDIO_RECORDINGS_COLUMN_NAMES);
                 string query = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_RECORDINGS_TABLE_NAME + " (" + Columns + ")";
                 var result = Database.GetInstance().ExecuteDefaultQuery(query);
             }
@@ -96,7 +96,7 @@ namespace AudioTracker.Data
         {
             try
             {
-                string Columns = GetCreateQueryStringFromArray(AUDIO_VOLUME_COLUMN_NAMES);
+                string Columns = DatabaseImplementation.GetCreateQueryStringFromArray(AUDIO_VOLUME_COLUMN_NAMES);
                 string query = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_RECORDINGS_TABLE_NAME + " (" + Columns + ")";
                 var result = Database.GetInstance().ExecuteDefaultQuery(query);
             }
@@ -605,21 +605,6 @@ namespace AudioTracker.Data
         */
 
         #endregion
-        
-        private static string GetCreateQueryStringFromArray(KeyValuePair<string, string>[] ColumnNamesAndTypes)
-        {
-            string CreateQueryString = "";
-            foreach (KeyValuePair<string, string> Entry in ColumnNamesAndTypes)
-            {
-                if (CreateQueryString != "")
-                {
-                    CreateQueryString = CreateQueryString + '\n';
-                }
-                CreateQueryString = CreateQueryString + Entry.Key + " " + Entry.Value + ", ";
-            }
-            CreateQueryString = CreateQueryString.Substring(0, CreateQueryString.Length - 2);
-            return CreateQueryString;
-        }
 
     }
 }

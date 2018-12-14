@@ -12,17 +12,51 @@ using System.Linq;
 using System.Globalization;
 using WindowsActivityTracker.Helpers;
 using WindowsActivityTracker.Models;
+using Shared.Helpers;
 
 namespace WindowsActivityTracker.Data
 {
     public class Queries
     {
-
-        private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.DbTable + " (id INTEGER PRIMARY KEY, time TEXT, tsStart TEXT, tsEnd TEXT, window TEXT, process TEXT);";
+        private static readonly string QUERY_CREATE_CATEGORIES = "CREATE TABLE IF NOT EXISTS " + Settings.DbRefTableCategories + " (label TEXT PRIMARY KEY, description TEXT, color TEXT, remarks TEXT);";
+        private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.DbTable + " (id INTEGER PRIMARY KEY, time TEXT, tsStart TEXT, tsEnd TEXT, window TEXT, process TEXT, category TEXT, FOREIGN KEY (category) REFERENCES " + Settings.DbRefTableCategories + "(label));";
         private static readonly string QUERY_INDEX = "CREATE INDEX IF NOT EXISTS windows_activity_ts_start_idx ON " + Settings.DbTable + " (tsStart);";
         private static readonly string QUERY_INSERT = "INSERT INTO " + Settings.DbTable + " (time, tsStart, tsEnd, window, process) VALUES ({0}, {1}, {2}, {3}, {4});";
 
+        /*
+        internal static readonly KeyValuePair<string, string>[] WINDOW_ACTIVITIY_COLUMN_NAMES = new KeyValuePair<string, string>[]
+        {
+            new KeyValuePair<string, string>("id", "INTEGER PRIMARY KEY"),
+            new KeyValuePair<string, string>("time", "TEXT"),
+            new KeyValuePair<string, string>("tsStart", "TEXT"),
+            new KeyValuePair<string, string>("tsEnd", "TEXT"),
+            new KeyValuePair<string, string>("window", "TEXT"),
+            new KeyValuePair<string, string>("process", "TEXT"),
+            new KeyValuePair<string, string>("category", "TEXT")
+        };
+        */
+
         #region Daemon Queries
+
+        internal static void CreateActivityCategoryReferenceTable()
+        {
+            try
+            {
+                Database.GetInstance().ExecuteDefaultQuery(QUERY_CREATE_CATEGORIES);
+                var categories = EnumHelper.GetValues<ActivityCategory>();
+                foreach (ActivityCategory category in categories)
+                {
+                    string query = "INSERT INTO " + Settings.DbRefTableCategories + " (label, description, color, remarks) VALUES " +
+                        "('" + Enum.GetName(typeof(ActivityCategory), category) + "', '" + EnumHelper.GetDescriptionForEnum(category) + "', '" + 
+                        Visualizations.DayFragmentationTimeline.GetHtmlColorForContextCategory(category) + "', '" + "" + "');";
+                    Database.GetInstance().ExecuteDefaultQuery(query);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
+        }
 
         internal static void CreateWindowsActivityTable()
         {
@@ -115,14 +149,42 @@ namespace WindowsActivityTracker.Data
             }
         }
 
+        internal static void InsertIntoDatabase(WindowsActivityEntry entry, bool IsStoreWindowTitle, bool IsStoreProcessName)
+        {
+            string ProcessName = null;
+            if (IsStoreProcessName)
+            {
+                ProcessName = entry.Process;
+            }
+            string WindowTitle = null;
+            if (IsStoreWindowTitle)
+            {
+                // make window titles more readable (TODO: improve!)
+                //var windowTitle = (string)row["window"];
+                //windowTitle = WindowTitleWebsitesExtractor.GetWebsiteDetails(processName, windowTitle);
+                //windowTitle = WindowTitleArtifactExtractor.GetArtifactDetails(processName, windowTitle);
+                //windowTitle = WindowTitleCodeExtractor.GetProjectName(windowTitle);
+                WindowTitle = WindowTitleWebsitesExtractor.GetWebsiteDetails(entry.Process, entry.WindowTitle);
+            }
+            ActivityCategory Category = ProcessToActivityMapper.Map(entry.Process, entry.WindowTitle);
+
+            string query = string.Format("INSERT INTO " + Settings.DbTable + " (time, tsStart, tsEnd, window, process, category) VALUES ({0}, {1}, {2}, {3}, {4}, {5});",
+                                      "strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime')",
+                                      Database.GetInstance().QTime2(entry.TsStart),
+                                      Database.GetInstance().QTime2(entry.TsEnd),
+                                      Database.GetInstance().Q(WindowTitle),
+                                      Database.GetInstance().Q(ProcessName),
+                                      Database.GetInstance().Q(Category.ToString()));
+
+            Database.GetInstance().ExecuteDefaultQuery(query);
+        }
+
         /// <summary>
         /// Saves the timestamp, start and end, process name and window title into the database.
         /// 
         /// In case the user doesn't want the window title to be stored (For privacy reasons),
         /// it is obfuscated.
         /// </summary>
-        /// <param name="window"></param>
-        /// <param name="process"></param>
         internal static void InsertSnapshot(WindowsActivityEntry entry)
         {
             try
@@ -293,12 +355,14 @@ namespace WindowsActivityTracker.Data
 
             try
             {
-                var query = "SELECT tsStart, tsEnd, window, process, (strftime('%s', tsEnd) - strftime('%s', tsStart)) as 'durInSec' "
+                string query = "SELECT tsStart, tsEnd, window, process, category, (strftime('%s', tsEnd) - strftime('%s', tsStart)) as 'durInSec' "
                               + "FROM " + Settings.DbTable + " "
-                              + "WHERE " + Database.GetInstance().GetDateFilteringStringForQuery(VisType.Day, date, "tsStart") + " AND " + Database.GetInstance().GetDateFilteringStringForQuery(VisType.Day, date, "tsEnd") + " "
+                              + "WHERE " + Database.GetInstance().GetDateFilteringStringForQuery(VisType.Day, date, "tsStart") + " AND " 
+                              + Database.GetInstance().GetDateFilteringStringForQuery(VisType.Day, date, "tsEnd") + " "
+                              //+ "JOIN " + Settings.DbRefTableCategories + " ON " + Settings.DbTable + ".category = " + Settings.DbRefTableCategories + ".label "
                               + "ORDER BY tsStart;";
 
-                var table = Database.GetInstance().ExecuteReadQuery(query);
+                DataTable table = Database.GetInstance().ExecuteReadQuery(query);
 
                 if (table != null)
                 {
@@ -311,17 +375,9 @@ namespace WindowsActivityTracker.Data
                         e.StartTime = DateTime.Parse((string)row["tsStart"], CultureInfo.InvariantCulture);
                         e.EndTime = DateTime.Parse((string)row["tsEnd"], CultureInfo.InvariantCulture);
                         e.DurationInSeconds = row.IsNull("durInSec") ? 0 : Convert.ToInt32(row["durInSec"], CultureInfo.InvariantCulture);
-                        var processName = (string)row["process"];
-
-                        // make window titles more readable (TODO: improve!)
-                        var windowTitle = (string)row["window"];
-                        windowTitle = WindowTitleWebsitesExtractor.GetWebsiteDetails(processName, windowTitle);
-                        //windowTitle = WindowTitleArtifactExtractor.GetArtifactDetails(processName, windowTitle);
-                        //windowTitle = WindowTitleCodeExtractor.GetProjectName(windowTitle);
-
-                        // map process and window to activity
-                        e.ActivityCategory = ProcessToActivityMapper.Map(processName, windowTitle);
-
+                        string processName = (string)row["process"];
+                        string windowTitle = (string)row["window"];
+                        e.ActivityCategory = (ActivityCategory)Enum.Parse(typeof(ActivityCategory), (string)row["category"]);
 
                         // check if we add a new item, or merge with the previous one
                         if (previousWindowsActivityEntry != null)

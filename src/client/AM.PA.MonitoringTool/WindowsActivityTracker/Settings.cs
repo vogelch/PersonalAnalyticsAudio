@@ -9,11 +9,15 @@ namespace WindowsActivityTracker
 {
     public static class Settings
     {
+        public const string TrackerName = "Window Activity Tracker";
         public const bool IsEnabled = true; // should never be disabled by the user (too many services rely on it)
         public static bool RecordIdle = true;
         internal const int NotCountingAsIdleInterval_ms = 2 * 60 * 1000; //in ms
         internal const int IdleTimerInterval_ms = 1000; // in ms
         internal const string DbTable = "windows_activity";
+        internal const string DbRefTableCategories = "windows_activity_categories";
+        internal static bool IsStoreWindowTitle = false;
+        internal static bool IsStoreProcess = false;
 
         internal const int IdleSleepValidate_TimerInterval_ms = 20 * 60 * 1000; // in ms
         internal const int IdleSleepValidate_ThresholdIdleBlocks_s = 10 * 60; // block sized that are considered for validation (2min)

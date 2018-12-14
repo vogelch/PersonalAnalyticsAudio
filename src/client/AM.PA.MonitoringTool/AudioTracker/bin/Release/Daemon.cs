@@ -632,6 +632,7 @@ namespace AudioTracker
                                 Logger.WriteToConsole("Warning: The audio device currently in use has been unplugged!");
                                 var msg1 = new Exception("Warning: The audio device currently in use has been unplugged!");
                                 Logger.WriteToLogFile(msg1);
+                                /*
                                 NotificationHandle = new NotifyIcon();
                                 NotificationHandle.BalloonTipTitle = "PersonalAnalytics: Audio device removed!";
                                 NotificationHandle.BalloonTipText = "The microphone used by the audio tracker was removed. Audio recording has been stopped. Personal Analytics will try to automatically resume recording on reconnect."; // ": Audio device " + inputAudioDevice.DeviceFriendlyName + " was removed.";
@@ -640,6 +641,7 @@ namespace AudioTracker
                                 NotificationHandle.Text = Name + ": Audio device removed!";
                                 NotificationHandle.Visible = true;
                                 NotificationHandle.ShowBalloonTip(5000);
+                                */
                             }
                         }
                     }

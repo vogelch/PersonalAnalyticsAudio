@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="WindowsActivityTracker.Views.FirstStartScreen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WindowsActivityTracker.Views"
+             xmlns:paColors="clr-namespace:Shared;assembly=Shared"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock TextWrapping="Wrap" Padding="0 5 0 5">This tracker allows you to collect information about window titles and process names. This allows you to analyse your activity throughout the day in retrospection.</TextBlock>
+            <TextBlock TextWrapping="Wrap" Padding="0 5 0 5">You can disable the storing of window titles and process names. If you deactivate these options, only the category of an acitivity (e.g. Development, Planning, Browsing, etc.) will be stored. You may also change what is stored anytime in the settings window. You can also examine what exactly has been stored and delete or obfuscate data</TextBlock>
+            <TextBlock TextWrapping="Wrap" Padding="0 5 0 5">Which information should be recorded?</TextBlock>
+            <CheckBox Name="RecordWindowTitlesCheckbox" Checked="RecordWindowTitles_Checked" Unchecked="RecordWindowTitles_Unchecked">Record window titles</CheckBox>
+            <CheckBox Name="RecordProcessNamesCheckbox" Checked="RecordProcessNames_Checked" Unchecked="RecordProcessNames_Unchecked">Record process names</CheckBox>
+        </StackPanel>
+    </Grid>    
+</UserControl>
