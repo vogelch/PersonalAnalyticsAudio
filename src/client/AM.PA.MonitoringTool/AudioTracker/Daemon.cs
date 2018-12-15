@@ -202,11 +202,19 @@ namespace AudioTracker
 
         public override void CreateDatabaseTablesIfNotExist()
         {
-            Queries.CreateAudioRecordingsTable();
+            string CreateAudioRecordingsTableString = DatabaseImplementation.GetCreateString(Settings.AUDIO_RECORDINGS_TABLE_NAME, Queries.AUDIO_RECORDINGS_COLUMN_NAMES);
+            var ResultAudioRecordingsCreation = Database.GetInstance().ExecuteDefaultQuery(CreateAudioRecordingsTableString);
             Queries.UpdateAllColumnsOfTable(Settings.AUDIO_RECORDINGS_TABLE_NAME, Queries.AUDIO_RECORDINGS_COLUMN_NAMES);
 
-            Queries.CreateAudioVolumeTable();
+            string CreateAudioVolumeTableString = DatabaseImplementation.GetCreateString(Settings.AUDIO_VOLUME_TABLE_NAME, Queries.AUDIO_VOLUME_COLUMN_NAMES);
+            var ResultAudioVolumeCreation = Database.GetInstance().ExecuteDefaultQuery(CreateAudioVolumeTableString);
             Queries.UpdateAllColumnsOfTable(Settings.AUDIO_VOLUME_TABLE_NAME, Queries.AUDIO_VOLUME_COLUMN_NAMES);
+
+            string CreateLiumAnalysisClusterTableString = DatabaseImplementation.GetCreateString(Settings.LIUM_ANALYSIS_CLUSTERS_TABLE_NAME, Queries.LIUM_ANALYSIS_CLUSTER_COLUMN_NAMES);
+            var ResultLiumAnalysisClusterCreation = Database.GetInstance().ExecuteDefaultQuery(CreateLiumAnalysisClusterTableString);
+
+            string CreateLiumAnalysisSegmentTableString = DatabaseImplementation.GetCreateString(Settings.LIUM_ANALYSIS_SEGMENTS_TABLE_NAME, Queries.LIUM_ANALYSIS_SEGMENT_COLUMN_NAMES);
+            var ResultLiumAnalysisSegmentCreation = Database.GetInstance().ExecuteDefaultQuery(CreateLiumAnalysisSegmentTableString);
         }
 
         public override void UpdateDatabaseTables(int version)

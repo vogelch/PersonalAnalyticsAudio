@@ -89,6 +89,27 @@ namespace Shared.Data
         }
 
         /// <summary>
+        /// Returns a creation query as a string for the given table name and the column names and types as indicated
+        /// </summary>
+        /// <param name="TableName"></param>
+        /// <param name="ColumnNamesAndTypes"></param>
+        /// <returns></returns>
+        public static string GetCreateString(string TableName, KeyValuePair<string, string>[] ColumnNamesAndTypes)
+        {
+            try
+            {
+                string Columns = GetCreateQueryStringFromArray(ColumnNamesAndTypes);
+                string query = "CREATE TABLE IF NOT EXISTS " + TableName + " (" + Columns + ")";
+                return query;
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Executes a query (given as parameter).
         /// Also logs the query.
         /// </summary>

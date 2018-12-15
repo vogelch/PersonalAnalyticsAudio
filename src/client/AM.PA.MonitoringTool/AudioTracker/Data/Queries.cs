@@ -55,6 +55,36 @@ namespace AudioTracker.Data
             //new KeyValuePair<string, string>("storing_timestamp", "DATETIME DEFAULT CURRENT_TIMESTAMP")
         };
 
+        internal static readonly KeyValuePair<string, string>[] LIUM_ANALYSIS_SEGMENT_COLUMN_NAMES = new KeyValuePair<string, string>[]
+        {
+            new KeyValuePair<string, string>("id", "INTEGER PRIMARY KEY"),
+            new KeyValuePair<string, string>("start_absolute_time", "DATETIME"),
+            new KeyValuePair<string, string>("filename_lium", "TEXT"),
+            new KeyValuePair<string, string>("cluster_id", "INTEGER"),
+            new KeyValuePair<string, string>("cluster_label", "TEXT"),
+            new KeyValuePair<string, string>("show_name", "TEXT"),
+            new KeyValuePair<string, string>("channel_number", "INTEGER"),
+            new KeyValuePair<string, string>("start_index", "TEXT"),
+            new KeyValuePair<string, string>("length", "TEXT"),
+            new KeyValuePair<string, string>("speaker_label", "TEXT"),
+            new KeyValuePair<string, string>("speaker_gender", "TEXT"),
+            new KeyValuePair<string, string>("speaker_band_type", "TEXT"),
+            new KeyValuePair<string, string>("speaker_environment", "TEXT"),
+            new KeyValuePair<string, string>("storing_timestamp", "DATETIME DEFAULT CURRENT_TIMESTAMP")
+        };
+
+        internal static readonly KeyValuePair<string, string>[] LIUM_ANALYSIS_CLUSTER_COLUMN_NAMES = new KeyValuePair<string, string>[]
+        {
+            new KeyValuePair<string, string>("id", "INTEGER PRIMARY KEY"),
+            new KeyValuePair<string, string>("cluster_label", "TEXT"),
+            new KeyValuePair<string, string>("filename_lium", "TEXT"),
+            new KeyValuePair<string, string>("score_fs", "REAL"),
+            new KeyValuePair<string, string>("score_ft", "REAL"),
+            new KeyValuePair<string, string>("score_ms", "REAL"),
+            new KeyValuePair<string, string>("score_mt", "REAL"),
+            new KeyValuePair<string, string>("storing_timestamp", "DATETIME DEFAULT CURRENT_TIMESTAMP")
+        };
+
         private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_TABLE_NAME + " ("
                                                                             + "id INTEGER PRIMARY KEY, "
                                                                             + "time TEXT, "
@@ -80,30 +110,12 @@ namespace AudioTracker.Data
 
         internal static void CreateAudioRecordingsTable()
         {
-            try
-            {
-                string Columns = DatabaseImplementation.GetCreateQueryStringFromArray(AUDIO_RECORDINGS_COLUMN_NAMES);
-                string query = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_RECORDINGS_TABLE_NAME + " (" + Columns + ")";
-                var result = Database.GetInstance().ExecuteDefaultQuery(query);
-            }
-            catch (Exception e)
-            {
-                Logger.WriteToLogFile(e);
-            }
+            DatabaseImplementation.GetCreateString(Settings.AUDIO_RECORDINGS_TABLE_NAME, AUDIO_RECORDINGS_COLUMN_NAMES);
         }
 
         internal static void CreateAudioVolumeTable()
         {
-            try
-            {
-                string Columns = DatabaseImplementation.GetCreateQueryStringFromArray(AUDIO_VOLUME_COLUMN_NAMES);
-                string query = "CREATE TABLE IF NOT EXISTS " + Settings.AUDIO_RECORDINGS_TABLE_NAME + " (" + Columns + ")";
-                var result = Database.GetInstance().ExecuteDefaultQuery(query);
-            }
-            catch (Exception e)
-            {
-                Logger.WriteToLogFile(e);
-            }
+            DatabaseImplementation.GetCreateString(Settings.AUDIO_VOLUME_TABLE_NAME, AUDIO_VOLUME_COLUMN_NAMES);
         }
 
         private static string GetAudioRecordingInsertQuery(AudioRecording newAudioRecording)
@@ -130,6 +142,26 @@ namespace AudioTracker.Data
             return query;
         }
 
+        private static string GetLiumAnalysisSegmentInsertQuery(LiumSegment newLiumSegment)
+        {
+            string query = "INSERT INTO " + Settings.LIUM_ANALYSIS_SEGMENTS_TABLE_NAME +
+                " (start_absolute_time, filename_lium, cluster_id, show_name, channel_number, start_index, length, " +
+                "speaker_label, speaker_gender, speaker_band_type, speaker_environment) VALUES (" +
+                "'" + "" + "'" + ", " + //"'" + __.ToString("yyyy-MM-dd HH:mm:ss.ffff") + "'" + ", " +
+                "'" + "" + "'" + ", " +
+                "'" + "" + "'" + ", " +
+                "'" + "" + "'" + ", " +
+                "'" + "" + "'" + ", " +
+                newLiumSegment.ChannelNumber + ", " +
+                newLiumSegment.StartIndexInFeatures + ", " +
+                newLiumSegment.LenghtInFeatures + ", " +
+                "'" + newLiumSegment.SpeakerLabel + "'" + ", " +
+                "'" + newLiumSegment.SpeakerGender + "'" + ", " +
+                "'" + newLiumSegment.BandType + "'" + ", " +
+                "'" + newLiumSegment.Environment + "'" + ")";
+            return query;
+        }
+
         /// <summary>
         /// Inserts meta data about an audio recording into the audio table
         /// </summary>
@@ -152,7 +184,7 @@ namespace AudioTracker.Data
 
         //internal static void StoreAudioRecording(AudioRecording newAudioRecording, LIUMResult newLIUMResult)
 
-
+        //TODO: move to Shared
         internal static void UpdateAllColumnsOfTable(string TableName, KeyValuePair<string, string>[] ColumnNamesAndTypes)
         {
             try

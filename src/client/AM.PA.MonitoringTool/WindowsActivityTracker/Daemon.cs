@@ -231,7 +231,7 @@ namespace WindowsActivityTracker
             {
                 tmpPreviousEntry.TsEnd = DateTime.Now;
                 //Queries.InsertSnapshot(tmpPreviousEntry);
-                Queries.InsertIntoDatabase(tmpPreviousEntry, Settings.IsStoreWindowTitle, Settings.IsStoreProcess);
+                Queries.InsertIntoDatabase(tmpPreviousEntry, Settings.IsStoreWindowTitle, Settings.IsStoreProcessName);
             }
         }
 
@@ -260,7 +260,7 @@ namespace WindowsActivityTracker
 
             // set store current entry
             //Queries.InsertSnapshot(_previousEntry);
-            Queries.InsertIntoDatabase(_previousEntry, Settings.IsStoreWindowTitle, Settings.IsStoreProcess);
+            Queries.InsertIntoDatabase(_previousEntry, Settings.IsStoreWindowTitle, Settings.IsStoreProcessName);
         }
 
         #endregion

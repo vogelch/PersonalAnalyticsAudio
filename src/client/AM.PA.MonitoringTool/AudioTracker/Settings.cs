@@ -36,6 +36,8 @@ namespace AudioTracker
         internal static readonly string AUDIO_TABLE_NAME = "audio";
         internal static readonly string AUDIO_RECORDINGS_TABLE_NAME = "audio_recording";
         internal static readonly string AUDIO_VOLUME_TABLE_NAME = "audio_volume";
+        internal static readonly string LIUM_ANALYSIS_SEGMENTS_TABLE_NAME = "audio_lium_segment";
+        internal static readonly string LIUM_ANALYSIS_CLUSTERS_TABLE_NAME = "audio_lium_cluster";
 
         //Daemon settings
         internal const string TRACKER_NAME = "Audio Tracker";

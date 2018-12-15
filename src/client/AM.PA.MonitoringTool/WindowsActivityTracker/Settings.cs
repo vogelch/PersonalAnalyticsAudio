@@ -17,7 +17,7 @@ namespace WindowsActivityTracker
         internal const string DbTable = "windows_activity";
         internal const string DbRefTableCategories = "windows_activity_categories";
         internal static bool IsStoreWindowTitle = false;
-        internal static bool IsStoreProcess = true;
+        internal static bool IsStoreProcessName = true;
 
         internal const int IdleSleepValidate_TimerInterval_ms = 20 * 60 * 1000; // in ms
         internal const int IdleSleepValidate_ThresholdIdleBlocks_s = 10 * 60; // block sized that are considered for validation (2min)

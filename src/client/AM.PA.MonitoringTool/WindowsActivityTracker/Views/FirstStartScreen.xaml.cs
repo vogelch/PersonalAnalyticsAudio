@@ -77,12 +77,12 @@ namespace WindowsActivityTracker.Views
 
         private void RecordProcessNames_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.IsStoreProcess = true;
+            Settings.IsStoreProcessName = true;
         }
 
         private void RecordProcessNames_Unchecked(object sender, RoutedEventArgs e)
         {
-            Settings.IsStoreProcess = false;
+            Settings.IsStoreProcessName = false;
         }
 
     }
