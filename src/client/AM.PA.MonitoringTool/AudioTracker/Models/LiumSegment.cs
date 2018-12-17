@@ -3,6 +3,7 @@
 // 
 // Licensed under the MIT License.
 
+using System;
 using System.ComponentModel;
 
 namespace AudioTracker.Models
@@ -11,6 +12,8 @@ namespace AudioTracker.Models
     {
         internal int InputFileName { get; set; } // instead of show name
         internal int ChannelNumber { get; set; } // the channel number
+        internal DateTime StartTime { get; set; }
+        internal DateTime EndTime { get; set; }
         internal int StartIndexInFeatures { get; set; } // the start of the segment in features
         internal int LenghtInFeatures { get; set; } // the length of the segment in features
         internal string SpeakerLabel { get; set; } // the speaker label
@@ -18,16 +21,23 @@ namespace AudioTracker.Models
         internal LiumBandType BandType { get; set; } // the type of band
         internal LiumEnvironment Environment { get; set; } // the type of environment
 
-        internal LiumSegment(string[] SegmentProperties)
+        private static readonly int LIUM_FEATURE_LENGTH = 10; // in milliseconds, i.e. 3000 features for a 30 seconds recording
+
+        internal LiumSegment(string lineFromFile, DateTime RecordingStartTime)
         {
+            string[] SegmentProperties = lineFromFile.Split(' ');
+            ChannelNumber = int.Parse(SegmentProperties[1]);
             StartIndexInFeatures = int.Parse(SegmentProperties[2]);
             LenghtInFeatures = int.Parse(SegmentProperties[3]);
             SpeakerLabel = SegmentProperties[7];
             SpeakerGender = GetGenderFromFlag(SegmentProperties[4]);
             BandType = GetBandTypeFromFlag(SegmentProperties[5]);
             Environment = GetEnvironmentFromFlag(SegmentProperties[6]);
+            StartTime = RecordingStartTime.AddMilliseconds(StartIndexInFeatures * LIUM_FEATURE_LENGTH);
+            EndTime = RecordingStartTime.AddMilliseconds(StartIndexInFeatures * LIUM_FEATURE_LENGTH + LenghtInFeatures * LIUM_FEATURE_LENGTH);
         }
 
+        /*
         internal LiumSegment(int InputFileName, int ChannelNumber, int StartIndexInFeatures, int LenghtInFeatures, string SpeakerLabel, 
             LiumGender SpeakerGender, LiumBandType BandType, LiumEnvironment Environment)
         {
@@ -40,6 +50,7 @@ namespace AudioTracker.Models
             this.BandType = BandType;
             this.Environment = Environment;
         }
+        */
 
         internal static LiumGender GetGenderFromFlag(string Flag)
         {

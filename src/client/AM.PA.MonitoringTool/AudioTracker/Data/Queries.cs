@@ -44,6 +44,7 @@ namespace AudioTracker.Data
             new KeyValuePair<string, string>("id", "INTEGER PRIMARY KEY"),
             new KeyValuePair<string, string>("audio_timestamp", "DATETIME"),
             new KeyValuePair<string, string>("rms_relative_value", "REAL"),
+            new KeyValuePair<string, string>("rms_dbfs", "REAL"),
             new KeyValuePair<string, string>("storing_timestamp", "DATETIME DEFAULT CURRENT_TIMESTAMP")
         };
 
@@ -59,9 +60,9 @@ namespace AudioTracker.Data
         {
             new KeyValuePair<string, string>("id", "INTEGER PRIMARY KEY"),
             new KeyValuePair<string, string>("start_absolute_time", "DATETIME"),
+            new KeyValuePair<string, string>("end_absolute_time", "DATETIME"),
             new KeyValuePair<string, string>("filename_lium", "TEXT"),
             new KeyValuePair<string, string>("cluster_id", "INTEGER"),
-            new KeyValuePair<string, string>("cluster_label", "TEXT"),
             new KeyValuePair<string, string>("show_name", "TEXT"),
             new KeyValuePair<string, string>("channel_number", "INTEGER"),
             new KeyValuePair<string, string>("start_index", "TEXT"),
@@ -82,6 +83,8 @@ namespace AudioTracker.Data
             new KeyValuePair<string, string>("score_ft", "REAL"),
             new KeyValuePair<string, string>("score_ms", "REAL"),
             new KeyValuePair<string, string>("score_mt", "REAL"),
+            new KeyValuePair<string, string>("merge_text", "TEXT"),
+            new KeyValuePair<string, string>("merge_with_value", "REAL"),
             new KeyValuePair<string, string>("storing_timestamp", "DATETIME DEFAULT CURRENT_TIMESTAMP")
         };
 
@@ -108,16 +111,6 @@ namespace AudioTracker.Data
             }
         }
 
-        internal static void CreateAudioRecordingsTable()
-        {
-            DatabaseImplementation.GetCreateString(Settings.AUDIO_RECORDINGS_TABLE_NAME, AUDIO_RECORDINGS_COLUMN_NAMES);
-        }
-
-        internal static void CreateAudioVolumeTable()
-        {
-            DatabaseImplementation.GetCreateString(Settings.AUDIO_VOLUME_TABLE_NAME, AUDIO_VOLUME_COLUMN_NAMES);
-        }
-
         private static string GetAudioRecordingInsertQuery(AudioRecording newAudioRecording)
         {
             string query = "INSERT INTO " + Settings.AUDIO_RECORDINGS_TABLE_NAME +
@@ -142,39 +135,129 @@ namespace AudioTracker.Data
             return query;
         }
 
-        private static string GetLiumAnalysisSegmentInsertQuery(LiumSegment newLiumSegment)
+        private static string GetAudioVolumeInsertQuery(List<AmplitudeData> NewAudioVolumeData)
+        {
+            string query = "INSERT INTO " + Settings.AUDIO_VOLUME_TABLE_NAME +
+                " (audio_timestamp, rms_relative_value, rms_dbfs) VALUES ";
+            foreach (AmplitudeData CurrentAmplitudeData in NewAudioVolumeData)
+            {
+                query += "('" + CurrentAmplitudeData.StartTime + "', " + CurrentAmplitudeData.RelativeAmplitudeRMSValue + ", " + CurrentAmplitudeData.AmplitudeDBFS + "), ";
+            }
+            query = query.Substring(0, query.Length - 2);
+
+            return query;
+        }
+
+        private static string GetLiumAnalysisClusterInsertQuery(LiumCluster newLiumCluster, string liumFilename)
+        {
+            string MergeTextForInsertion = "NULL";
+            if (newLiumCluster.MergeText != null)
+            {
+                MergeTextForInsertion = "'" + newLiumCluster.MergeText + "'";
+            }
+            string MergeWithForInsertion = "NULL";
+            if (newLiumCluster.MergeWith != null)
+            {
+                MergeWithForInsertion = newLiumCluster.MergeWith.ToString();
+            }
+            string query = "INSERT INTO " + Settings.LIUM_ANALYSIS_CLUSTERS_TABLE_NAME +
+                " (cluster_label, filename_lium, score_fs, score_ft, score_ms, score_mt, merge_text, merge_with_value) VALUES (" + 
+                "'" + newLiumCluster.ClusterLabel + "'" + ", " +
+                "'" + liumFilename + "'" + ", " +
+                newLiumCluster.ScoreFS + ", " +
+                newLiumCluster.ScoreFT + ", " +
+                newLiumCluster.ScoreMS + ", " +
+                newLiumCluster.ScoreMT + ", " +
+                MergeTextForInsertion + ", " +
+                MergeWithForInsertion + ")";
+            return query;
+        }
+
+        private static string GetLiumAnalysisSegmentInsertQuery(LiumSegment NewLiumSegment, string LiumFilename, int ClusterID)
         {
             string query = "INSERT INTO " + Settings.LIUM_ANALYSIS_SEGMENTS_TABLE_NAME +
-                " (start_absolute_time, filename_lium, cluster_id, show_name, channel_number, start_index, length, " +
+                " (start_absolute_time, end_absolute_time, filename_lium, cluster_id, show_name, channel_number, start_index, length, " +
                 "speaker_label, speaker_gender, speaker_band_type, speaker_environment) VALUES (" +
-                "'" + "" + "'" + ", " + //"'" + __.ToString("yyyy-MM-dd HH:mm:ss.ffff") + "'" + ", " +
+                "'" + NewLiumSegment.StartTime.ToString("yyyy-MM-dd HH:mm:ss.ffff") + "'" + ", " +
+                "'" + NewLiumSegment.EndTime.ToString("yyyy-MM-dd HH:mm:ss.ffff") + "'" + ", " +
+                "'" + LiumFilename + "'" + ", " +
+                ClusterID + ", " +
                 "'" + "" + "'" + ", " +
-                "'" + "" + "'" + ", " +
-                "'" + "" + "'" + ", " +
-                "'" + "" + "'" + ", " +
-                newLiumSegment.ChannelNumber + ", " +
-                newLiumSegment.StartIndexInFeatures + ", " +
-                newLiumSegment.LenghtInFeatures + ", " +
-                "'" + newLiumSegment.SpeakerLabel + "'" + ", " +
-                "'" + newLiumSegment.SpeakerGender + "'" + ", " +
-                "'" + newLiumSegment.BandType + "'" + ", " +
-                "'" + newLiumSegment.Environment + "'" + ")";
+                NewLiumSegment.ChannelNumber + ", " +
+                NewLiumSegment.StartIndexInFeatures + ", " +
+                NewLiumSegment.LenghtInFeatures + ", " +
+                "'" + NewLiumSegment.SpeakerLabel + "'" + ", " + // TODO: redundant
+                "'" + NewLiumSegment.SpeakerGender + "'" + ", " +
+                "'" + NewLiumSegment.BandType + "'" + ", " +
+                "'" + NewLiumSegment.Environment + "'" + ")";
             return query;
         }
 
         /// <summary>
         /// Inserts meta data about an audio recording into the audio table
         /// </summary>
-        /// <param name="newAudioRecording">audio recording object with meta data to store into the database</param>
-        internal static void StoreAudioRecording(AudioRecording newAudioRecording)
+        /// <param name="NewAudioRecording">audio recording object with meta data to store into the database</param>
+        internal static void StoreAudioRecording(AudioRecording NewAudioRecording)
         {
             //private static readonly string QUERY_INSERT = "INSERT INTO " + Settings.DbTable + " (time, tsStart, tsEnd, window, process) VALUES ({0}, {1}, {2}, {3}, {4});";
             try
             {
-                string query = GetAudioRecordingInsertQuery(newAudioRecording);
-                Database.GetInstance().ExecuteDefaultQuery(query);
+                string QueryRecording = GetAudioRecordingInsertQuery(NewAudioRecording);
+                Database.GetInstance().ExecuteDefaultQuery(QueryRecording);
                 //long? newRowID = Database.GetInstance().ExecuteInsertQuery(query);
                 //Logger.WriteToConsole("Inserted new audio recording with row ID " + newRowID + ".");
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
+        }
+
+        /// <summary>
+        /// Inserts a set of audio volume data points into the audio volume data
+        /// </summary>
+        /// <param name="NewAudioVolumeData">List with AmplitudeData to store in the database</param>
+        internal static void StoreAudioVolumeData(List<AmplitudeData> NewAudioVolumeData)
+        {
+            try
+            {
+                string QueryVolume = GetAudioVolumeInsertQuery(NewAudioVolumeData);
+                Database.GetInstance().ExecuteDefaultQuery(QueryVolume);
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
+        }
+
+        /// <summary>
+        /// Inserts LIUM analysis data to the database
+        /// </summary>
+        /// <param name="NewLiumClusterSet">list of LIUM clusters to store into the database</param>
+        internal static void StoreLiumAnalysisResult(List<LiumCluster> NewLiumClusterSet, string LiumFilename)
+        {
+            try
+            {
+                foreach (LiumCluster CurrentCluster in NewLiumClusterSet)
+                {
+                    string queryCluster = GetLiumAnalysisClusterInsertQuery(CurrentCluster, LiumFilename);
+                    Database.GetInstance().ExecuteDefaultQuery(queryCluster);
+
+                    if (CurrentCluster.SegmentSet == null)
+                    {
+                        // this should not be possible to happen
+                        Logger.WriteToConsole("Error: Segment set empty.");
+                    }
+                    else
+                    {
+                        foreach (LiumSegment CurrentSegment in CurrentCluster.SegmentSet)
+                        {
+                            int ClusterID = 0;
+                            string querySegment = GetLiumAnalysisSegmentInsertQuery(CurrentSegment, LiumFilename, ClusterID);
+                            Database.GetInstance().ExecuteDefaultQuery(querySegment);
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -207,6 +290,8 @@ namespace AudioTracker.Data
                             Logger.WriteToLogFile(e);
                         }
                     }
+
+                    //TODO: what happens if the type of an already existing table column is changed?
 
                     //TODO: Database.GetInstance().ExecuteDefaultQuery(QUERY_INDEX);
 

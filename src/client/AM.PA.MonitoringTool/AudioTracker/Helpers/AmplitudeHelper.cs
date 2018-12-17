@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace AudioTracker.Helpers
 {
-    class AmplitudeHelper
+    static class AmplitudeHelper
     {
         internal static double[] GetRelativeAmplitudes(byte[] InputBuffer, int BytesRecorded)
         {
@@ -24,6 +24,31 @@ namespace AudioTracker.Helpers
                 j++;
             }
             return relativeAmplitudes;
+        }
+
+        // TODO: this is partially redundant to GetAmplitudeData; refactor
+        internal static List<AmplitudeData> GetRelativeAmplitudeSegments(double[] RelativeAmplitudeData, int NumberOfSegments, DateTime StartTime, double MillisecondsPerSample)
+        {
+            int SizeOfSmallerArrays = (int)Math.Round((double)RelativeAmplitudeData.Length / (double)NumberOfSegments);
+            var AmplitudeChunks = Split(RelativeAmplitudeData, SizeOfSmallerArrays);
+            List<AmplitudeData> NewAmplitudeDataList = new List<AmplitudeData>();
+            int counter = 0;
+            foreach (var CurrentData in AmplitudeChunks)
+            {
+                AmplitudeData CurrentAmplitudeData = new AmplitudeData();
+                CurrentAmplitudeData.RelativeAmplitudeRMSValue = GetAmplitudeRootMeanSquare(CurrentData.ToArray<double>());
+                Tuple<double, int> ModeAndCount = GetModeOfRelativeAmplitudes(CurrentData.ToArray<double>());
+                CurrentAmplitudeData.MaxValue = CurrentData.Max();
+                CurrentAmplitudeData.MinValue = CurrentData.Min();
+                CurrentAmplitudeData.AvgValue = CurrentData.Sum() / CurrentData.ToArray<double>().Length;
+                CurrentAmplitudeData.AmplitudeDBFS = 20 * Math.Log(CurrentAmplitudeData.RelativeAmplitudeRMSValue, 10);
+                CurrentAmplitudeData.ModeValue = ModeAndCount.Item1;
+                CurrentAmplitudeData.ModeOccurrences = ModeAndCount.Item2;
+                CurrentAmplitudeData.StartTime = StartTime.AddMilliseconds(counter * CurrentData.ToArray<double>().Length * MillisecondsPerSample);
+                NewAmplitudeDataList.Add(CurrentAmplitudeData);
+                counter++;
+            }
+            return NewAmplitudeDataList;
         }
 
         internal static Tuple<double, int> GetModeOfRelativeAmplitudes(double[] relativeAmplitudes)
@@ -105,6 +130,21 @@ namespace AudioTracker.Helpers
             newAmplitudeData.AmplitudeDBFS = 20 * Math.Log(newAmplitudeData.RelativeAmplitudeRMSValue, 10);
             newAmplitudeDataList.Add(newAmplitudeData);
             return newAmplitudeDataList;
+        }
+
+        /// <summary>
+        /// Helper method to split an array into several smaller arrays.
+        /// </summary>
+        /// <typeparam name="T">The type of the array.</typeparam>
+        /// <param name="ArrayToSplit">The array which shall be splitted</param>
+        /// <param name="SizeOfSmallerArrays">The size of the smaller arrays which will be returned</param>
+        /// <returns>An array containing smaller arrays.</returns>
+        public static IEnumerable<IEnumerable<T>> Split<T>(this T[] ArrayToSplit, int SizeOfSmallerArrays)
+        {
+            for (var i = 0; i < (float)ArrayToSplit.Length / SizeOfSmallerArrays; i++)
+            {
+                yield return ArrayToSplit.Skip(i * SizeOfSmallerArrays).Take(SizeOfSmallerArrays);
+            }
         }
 
     }

@@ -19,7 +19,8 @@ namespace WindowsActivityTracker.Data
     public class Queries
     {
         private static readonly string QUERY_CREATE_CATEGORIES = "CREATE TABLE IF NOT EXISTS " + Settings.DbRefTableCategories + " (label TEXT PRIMARY KEY, description TEXT, color TEXT, remarks TEXT);";
-        private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.DbTable + " (id INTEGER PRIMARY KEY, time TEXT, tsStart TEXT, tsEnd TEXT, window TEXT, process TEXT, category TEXT, FOREIGN KEY (category) REFERENCES " + Settings.DbRefTableCategories + "(label));";
+        //private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.DbTable + " (id INTEGER PRIMARY KEY, time TEXT, tsStart TEXT, tsEnd TEXT, window TEXT, process TEXT, category TEXT, FOREIGN KEY (category) REFERENCES " + Settings.DbRefTableCategories + "(label));"; //TODO: foreign key would be nice but could lead to major problems if categories are changed
+        private static readonly string QUERY_CREATE = "CREATE TABLE IF NOT EXISTS " + Settings.DbTable + " (id INTEGER PRIMARY KEY, time TEXT, tsStart TEXT, tsEnd TEXT, window TEXT, process TEXT, category TEXT);";
         private static readonly string QUERY_INDEX = "CREATE INDEX IF NOT EXISTS windows_activity_ts_start_idx ON " + Settings.DbTable + " (tsStart);";
         private static readonly string QUERY_INSERT = "INSERT INTO " + Settings.DbTable + " (time, tsStart, tsEnd, window, process) VALUES ({0}, {1}, {2}, {3}, {4});";
 
@@ -42,6 +43,8 @@ namespace WindowsActivityTracker.Data
         {
             try
             {
+                string DeleteRefTableCategoriesQuery = "DROP TABLE IF EXISTS " + Settings.DbRefTableCategories + ";";
+                Database.GetInstance().ExecuteDefaultQuery(DeleteRefTableCategoriesQuery);
                 Database.GetInstance().ExecuteDefaultQuery(QUERY_CREATE_CATEGORIES);
                 var categories = EnumHelper.GetValues<ActivityCategory>();
                 foreach (ActivityCategory category in categories)

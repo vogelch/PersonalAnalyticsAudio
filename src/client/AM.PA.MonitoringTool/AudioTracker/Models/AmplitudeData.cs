@@ -14,6 +14,7 @@ namespace AudioTracker.Models
     class AmplitudeData
     {
         //public NumberOfSamples // Duration // Bit-Tiefe // Channels??
+        public DateTime StartTime { get; set; }
         public double MaxValue { get; set; }
         public double MinValue { get; set; }
         public double AvgValue { get; set; }

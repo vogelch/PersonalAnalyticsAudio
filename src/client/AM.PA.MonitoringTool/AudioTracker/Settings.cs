@@ -32,6 +32,9 @@ namespace AudioTracker
         //internal static MMDevice InputAudioDevice;
         //internal static string InputAudioDeviceID;
 
+        //LIUM settings
+        internal const bool IsLiumSaveAllStep = false;
+
         //Database table names
         internal static readonly string AUDIO_TABLE_NAME = "audio";
         internal static readonly string AUDIO_RECORDINGS_TABLE_NAME = "audio_recording";

@@ -62,7 +62,7 @@ namespace Shared
 
         public static string ExportFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PersonalAnalytics");
         //public static string RemoteFolderName = "remote\\";
-        public static string DatabaseFilename = "pa_audio.dat";
+        public static string DatabaseFilename = "pa_audio_mod.dat";
         public static string ErrorLogFilename = "errors_audio.log";
 
         public const string RegAppName = "PersonalAnalytics"; // set manually
