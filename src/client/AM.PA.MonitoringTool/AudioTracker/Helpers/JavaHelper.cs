@@ -22,14 +22,23 @@ namespace AudioTracker.Helpers
         /// </summary>
         public static bool IsJavaAvailable()
         {
-            //TODO: possibly use IKVM.NET to avoid this mess completely?
+            //TODO: possibly use IKVM.NET to avoid these heuristics completely?
 
             //check whether there is an entry for Java int the Windows registry (but does not guarantee that it will actually run; could also be at a different place)
             RegistryKey rk = Registry.LocalMachine;
             RegistryKey subKey = rk.OpenSubKey("SOFTWARE\\JavaSoft\\Java Runtime Environment");
-            string currentVerion = subKey.GetValue("CurrentVersion").ToString();
-            Logger.WriteToConsole("Java version: " + currentVerion);
-            Database.GetInstance().LogInfo("A registry entry for Java has been found on the participant's system. Version information: " + currentVerion);
+            if (subKey != null)
+            {
+                string currentVerion = subKey.GetValue("CurrentVersion").ToString();
+                Logger.WriteToConsole("Java version: " + currentVerion);
+                Database.GetInstance().LogInfo("A registry entry for Java has been found on the participant's system. Version information: " + currentVerion);
+            }
+            else
+            {
+                Database.GetInstance().LogError("No registry entry for Java has been found on the participant's system.");
+                var msg = new Exception("No registry entry found for Java on the participant's system.");
+                Logger.WriteToLogFile(msg);
+            }
 
             bool isAvailable = false;
             List<String> output = new List<string>();
@@ -51,14 +60,14 @@ namespace AudioTracker.Helpers
                 {
                     if (e.Data != null)
                     {
-                        output.Add((string)e.Data);
+                        output.Add(e.Data);
                     }
                 });
                 process.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
                 {
                     if (e.Data != null)
                     {
-                        output.Add((String)e.Data);
+                        output.Add(e.Data);
                     }
                 });
 
@@ -69,13 +78,16 @@ namespace AudioTracker.Helpers
                 result = process.StandardOutput.ReadToEnd();
                 string error = null;
                 error = process.StandardError.ReadToEnd();
-                Database.GetInstance().LogInfo("Java is available on the participant's system. Java test command (java -version) has been executed successfully. Resulting information: " + result + " Detailed information: " + error.Trim());
 
                 isAvailable = (process.ExitCode == 0);
 
-                if (!isAvailable)
+                if (isAvailable)
                 {
-                    Database.GetInstance().LogError("Java is NOT available on the participant's system. Java test command (java -version) failed. Resulting information: " + result + " Detailed information: " + error.Trim());
+                    Database.GetInstance().LogInfo("Java is available on the participant's system. Java test command (java -version) has been executed successfully. Resulting information: " + error.Trim());
+                }
+                else
+                {
+                    Database.GetInstance().LogError("Java is NOT available on the participant's system. Java test command (java -version) failed. Resulting information: Resulting information: " + error.Trim());
                 }
             }
             catch (Exception ex)

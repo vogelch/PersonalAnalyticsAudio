@@ -12,17 +12,17 @@
          <Members>
           <Member Name="#Dispose(System.Boolean)" Kind="Method" Static="False" Accessibility="Family" ExternallyVisible="False">
            <Messages>
-            <Message Id="checkAudioDeviceTimer" TypeName="DisposableFieldsShouldBeDisposed" Category="Microsoft.Usage" CheckId="CA2213" Status="Active" Created="2018-12-17 00:05:40Z" FixCategory="NonBreaking">
+            <Message Id="checkAudioDeviceTimer" TypeName="DisposableFieldsShouldBeDisposed" Category="Microsoft.Usage" CheckId="CA2213" Status="Active" Created="2018-12-17 22:25:49Z" FixCategory="NonBreaking">
              <Issue Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker" File="Daemon.cs" Line="76">'Daemon' enthält das Feld "'Daemon.checkAudioDeviceTimer'", das vom Typ IDisposable ist: 'Timer'. Ändern Sie die Dispose-Methode für 'Daemon', sodass für dieses Feld Dispose oder Close aufgerufen wird.</Issue>
             </Message>
-            <Message Id="waveSource" TypeName="DisposableFieldsShouldBeDisposed" Category="Microsoft.Usage" CheckId="CA2213" Status="Active" Created="2018-12-17 00:05:40Z" FixCategory="NonBreaking">
+            <Message Id="waveSource" TypeName="DisposableFieldsShouldBeDisposed" Category="Microsoft.Usage" CheckId="CA2213" Status="Active" Created="2018-12-17 22:25:49Z" FixCategory="NonBreaking">
              <Issue Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker" File="Daemon.cs" Line="76">'Daemon' enthält das Feld "'Daemon.waveSource'", das vom Typ IDisposable ist: 'WaveIn'. Ändern Sie die Dispose-Methode für 'Daemon', sodass für dieses Feld Dispose oder Close aufgerufen wird.</Issue>
             </Message>
            </Messages>
           </Member>
           <Member Name="#waveSource_DataAvailable(System.Object,NAudio.Wave.WaveInEventArgs)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
            <Messages>
-            <Message TypeName="Objekte nicht mehrmals verwerfen" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2018-12-17 00:05:40Z" FixCategory="DependsOnFix">
+            <Message TypeName="Objekte nicht mehrmals verwerfen" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2018-12-17 22:25:49Z" FixCategory="DependsOnFix">
              <Issue Certainty="75" Level="Warning" Path="C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\AudioTracker" File="Daemon.cs" Line="411">Das Objekt "'waveFile'" kann mehrere Male in der 'Daemon.waveSource_DataAvailable(object, WaveInEventArgs)'-Methode verworfen werden. Um zu verhindern, dass eine System.ObjectDisposedException generiert wird, sollten Sie die Dispose-Methode nur einmal für ein Objekt aufrufen.: Lines: 411</Issue>
             </Message>
            </Messages>
