@@ -114,17 +114,7 @@ namespace AudioTracker
                 //checkAudioDeviceTimer.Start();
 
                 // Write system info to database
-                ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
-                ManagementObjectCollection moc = mc.GetInstances();
-                if (moc.Count != 0)
-                {
-                    foreach (ManagementObject mo in mc.GetInstances())
-                    {
-                        string currentSystemInfo = "\nMachine Make: " + mo["Manufacturer"].ToString() + "\nMachine Model: " + mo["Model"].ToString() + "\nSystem Type: " +
-                            mo["SystemType"].ToString() + "\nHost Name: " + mo["DNSHostName"].ToString() + "\nLogon User Name: " + mo["UserName"].ToString() + "\n";
-                        Database.GetInstance().LogInfo(currentSystemInfo);
-                    }
-                }
+                GetAndStoreSystemInfo();
 
                 // Check whether Java is available, copy LIUM jar file resource to executing location
                 if (!JavaHelper.IsJavaAvailable())
@@ -661,6 +651,22 @@ namespace AudioTracker
             const int HR_ERROR_HANDLE_DISK_FULL = unchecked((int)0x80070027);
             const int HR_ERROR_DISK_FULL = unchecked((int)0x80070070);
             return ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL;
+        }
+
+        //TODO: move to Helpers
+        private static void GetAndStoreSystemInfo()
+        {
+            ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
+            ManagementObjectCollection moc = mc.GetInstances();
+            if (moc.Count != 0)
+            {
+                foreach (ManagementObject mo in mc.GetInstances())
+                {
+                    string currentSystemInfo = "\nMachine Make: " + mo["Manufacturer"].ToString() + "\nMachine Model: " + mo["Model"].ToString() + "\nSystem Type: " +
+                        mo["SystemType"].ToString() + "\nHost Name: " + mo["DNSHostName"].ToString() + "\nLogon User Name: " + mo["UserName"].ToString();
+                    Database.GetInstance().LogInfo(currentSystemInfo);
+                }
+            }
         }
 
         internal void DeviceNotificationHandler(Message msg)

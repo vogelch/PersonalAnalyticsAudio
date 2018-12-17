@@ -24,6 +24,9 @@ namespace AudioTracker.Helpers
         {
             //TODO: possibly use IKVM.NET to avoid these heuristics completely?
 
+            //get environment variables and store them in the database log table (for debugging purposes)
+            GetAndStoreEnvironmentVariables();
+
             //check whether there is an entry for Java int the Windows registry (but does not guarantee that it will actually run; could also be at a different place)
             RegistryKey rk = Registry.LocalMachine;
             RegistryKey subKey = rk.OpenSubKey("SOFTWARE\\JavaSoft\\Java Runtime Environment");
@@ -41,7 +44,7 @@ namespace AudioTracker.Helpers
             }
 
             bool isAvailable = false;
-            List<String> output = new List<string>();
+            List<string> output = new List<string>();
 
             try
             {
@@ -54,7 +57,6 @@ namespace AudioTracker.Helpers
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.Arguments = arguments;
 
                 process.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
                 {
@@ -96,6 +98,53 @@ namespace AudioTracker.Helpers
             }
 
             return isAvailable;
+        }
+
+        public static void GetAndStoreEnvironmentVariables()
+        {
+            try
+            {
+                List<string> output = new List<string>();
+                string command = "set";
+                ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + command);
+                procStartInfo.RedirectStandardOutput = true;
+                procStartInfo.RedirectStandardError = true;
+                procStartInfo.UseShellExecute = false;
+                procStartInfo.CreateNoWindow = true;
+                procStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                Process process = new Process();
+                process.StartInfo = procStartInfo;
+
+                process.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        output.Add(e.Data);
+                    }
+                });
+                process.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        output.Add(e.Data);
+                    }
+                });
+
+                process.Start();
+                process.WaitForExit();
+
+                string result = null;
+                result = process.StandardOutput.ReadToEnd();
+                string error = null;
+                error = process.StandardError.ReadToEnd();
+
+                Database.GetInstance().LogInfo("Environment variables on the participant's system: " + result.Trim());
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToLogFile(ex);
+            }
         }
 
         public static void WriteResourceToFile(string resourceName, string fileName)

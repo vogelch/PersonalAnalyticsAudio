@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="30294016">
-      <assemblyIdentity name="AudioTracker" version="0.9.6925.42174" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AudioTracker.dll" size="30294528">
+      <assemblyIdentity name="AudioTracker" version="0.9.6926.1302" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>m2ZA6l9H4B8WGlcgTUpJSOwO2d6mc5uzJPAL6TTD+As=</dsig:DigestValue>
+        <dsig:DigestValue>eSE0JQu6G9tGYamfNotglapBV5roCt0fh2SDksPIDXg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -194,19 +194,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Sq4thqz4oRnOxOkvEM0B5EYhvJqXu8X4MoJunAX2UJI=</dsig:DigestValue>
+        <dsig:DigestValue>6fDJYb8cS/HMDXtigGiKkBe7bsXpNbGQUFoqyOKnVb0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Retrospection.dll" size="666624">
-      <assemblyIdentity name="Retrospection" version="1.0.6925.42177" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="Retrospection" version="1.0.6926.1305" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>g+zSnLoUhmA/qFhiora+sQE2YsQv+WsxoTXQICZIWTs=</dsig:DigestValue>
+        <dsig:DigestValue>f11D3DBFqijatbDA5Itx1Cby82lKhOh8kuzqFwcd3dA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

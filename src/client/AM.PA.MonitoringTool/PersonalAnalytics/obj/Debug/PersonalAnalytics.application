@@ -7,14 +7,14 @@
     <framework targetVersion="4.5" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="PersonalAnalytics.exe.manifest" size="19364">
+    <dependentAssembly dependencyType="install" codebase="PersonalAnalytics.exe.manifest" size="19362">
       <assemblyIdentity name="PersonalAnalytics.exe" version="0.9.5.181" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>C9KaSctEZR3BtbdPvO09swnRplOyKjCF6Q1s9q/zZX4=</dsig:DigestValue>
+        <dsig:DigestValue>NHXxn45MO6iSLA0tBTQ5fX8xcMQYpsNO2trpmMNnvk4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
