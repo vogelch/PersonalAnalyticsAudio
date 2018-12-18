@@ -14,3 +14,8 @@ C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringToo
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.csproj.CopyComplete
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.dll
 C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.pdb
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\Views\FirstStartScreen.g.cs
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker_MarkupCompile.cache
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker_MarkupCompile.lref
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\Views\FirstStartScreen.baml
+C:\Users\Christoph\source\repos\PersonalAnalytics\src\client\AM.PA.MonitoringTool\WindowsActivityTracker\obj\Release\WindowsActivityTracker.g.resources

@@ -32,8 +32,27 @@ namespace AudioTracker.Views
         public FirstStartWindow()
         {
             InitializeComponent();
+
+            JavaUnavailableMessage.Visibility = Visibility.Hidden;
+            if (!JavaHelper.IsJavaAvailable())
+            {
+                JavaUnavailableMessage.Visibility = Visibility.Visible;
+            }
+            /*
+            Tuple<bool, string> IsVersionProblem = JavaHelper.IsJavaVersionWrong();
+            string AdjustedErrorMessage;
+            if (IsVersionProblem.Item1)
+            {
+                AdjustedErrorMessage = JavaUnavailableMessage.Text + " Error due to conflict of Java version in Windows registry and executable (error message: " + IsVersionProblem.Item2 + ")";
+            }
+            else
+            {
+                AdjustedErrorMessage = JavaUnavailableMessage.Text + " (unknown error)";
+            }
+            JavaUnavailableMessage.Text = AdjustedErrorMessage;
+            */
         }
-    
+
         public string GetTitle()
         {
             return Settings.Name;

@@ -24,23 +24,41 @@ namespace AudioTracker.Helpers
         {
             //TODO: possibly use IKVM.NET to avoid these heuristics completely?
 
-            //get environment variables and store them in the database log table (for debugging purposes)
-            GetAndStoreEnvironmentVariables();
+            try
+            {
+                //get environment variables and store them in the database log table (for debugging purposes)
+                /*
+                string EnvironmentPathJavaHome = Environment.GetEnvironmentVariable("JAVA_HOME");
+                string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(javaKey))
+                {
+                    string CurrentVersionFromRegistry = regKey.GetValue("CurrentVersion").ToString();
+                    using (RegistryKey key = regKey.OpenSubKey(CurrentVersionFromRegistry))
+                    {
+                        string JavaHomeFromRegistry = key.GetValue("JavaHome").ToString();
+                    }
+                }
+                */
 
-            //check whether there is an entry for Java int the Windows registry (but does not guarantee that it will actually run; could also be at a different place)
-            RegistryKey rk = Registry.LocalMachine;
-            RegistryKey subKey = rk.OpenSubKey("SOFTWARE\\JavaSoft\\Java Runtime Environment");
-            if (subKey != null)
-            {
-                string currentVerion = subKey.GetValue("CurrentVersion").ToString();
-                Logger.WriteToConsole("Java version: " + currentVerion);
-                Database.GetInstance().LogInfo("A registry entry for Java has been found on the participant's system. Version information: " + currentVerion);
+                //check whether there is an entry for Java int the Windows registry (but does not guarantee that it will actually run; could also be at a different place)
+                RegistryKey rk = Registry.LocalMachine;
+                RegistryKey subKey = rk.OpenSubKey("SOFTWARE\\JavaSoft\\Java Runtime Environment");
+                if (subKey != null)
+                {
+                    string currentVerion = subKey.GetValue("CurrentVersion").ToString();
+                    Logger.WriteToConsole("Java version: " + currentVerion);
+                    Database.GetInstance().LogInfo("A registry entry for Java has been found on the participant's system. Version information: " + currentVerion);
+                }
+                else
+                {
+                    Database.GetInstance().LogError("No registry entry for Java has been found on the participant's system.");
+                    var msg = new Exception("No registry entry found for Java on the participant's system.");
+                    Logger.WriteToLogFile(msg);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Database.GetInstance().LogError("No registry entry for Java has been found on the participant's system.");
-                var msg = new Exception("No registry entry found for Java on the participant's system.");
-                Logger.WriteToLogFile(msg);
+                Logger.WriteToLogFile(ex);
             }
 
             bool isAvailable = false;
@@ -48,12 +66,16 @@ namespace AudioTracker.Helpers
 
             try
             {
+                string EnvironmentUserProfile = Environment.GetEnvironmentVariable("USERPROFILE");
+                Logger.WriteToConsole("EnvironmentUserProfile: " + EnvironmentUserProfile);
+
                 Process process = new Process();
                 string arguments = "-version" + " \"";
                 process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.FileName = @"java";
                 process.StartInfo.Arguments = arguments;
+                process.StartInfo.WorkingDirectory = EnvironmentUserProfile;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
@@ -146,6 +168,73 @@ namespace AudioTracker.Helpers
                 Logger.WriteToLogFile(ex);
             }
         }
+
+        public static Tuple<bool, string> IsJavaVersionWrong()
+        {
+            List<string> output = new List<string>();
+
+            try
+            {
+                Process process = new Process();
+                string arguments = "-version" + " \"";
+                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.FileName = @"java";
+                process.StartInfo.Arguments = arguments;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+
+                process.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        output.Add(e.Data);
+                    }
+                });
+                process.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        output.Add(e.Data);
+                    }
+                });
+
+                process.Start();
+                process.WaitForExit();
+
+                string JavaOutput = null;
+                JavaOutput = process.StandardOutput.ReadToEnd();
+                string error = null;
+                error = process.StandardError.ReadToEnd();
+
+                Logger.WriteToConsole("Java Result: " + error.Trim());
+
+                bool IsVersionWrong = false;
+                error = @"Error: Registry key 'Software\JavaSoft\Java Runtime Environment'\CurrentVersion'
+                has value '1.8', but '1.7' is required.
+                Error: could not find java.dll
+                Error: Could not find Java SE Runtime Environment.";
+                if (error.Contains("Error: Registry key"))
+                {
+                    IsVersionWrong = true;
+                }
+                string ErrorMessage = null;
+                if (IsVersionWrong)
+                {
+                    ErrorMessage = error;
+                }
+                return new Tuple<bool, string>(IsVersionWrong, ErrorMessage);
+
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToLogFile(ex);
+                return null;
+            }
+
+        }
+
 
         public static void WriteResourceToFile(string resourceName, string fileName)
         {

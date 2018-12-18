@@ -114,17 +114,8 @@ namespace AudioTracker
                 //checkAudioDeviceTimer.Start();
 
                 // Write system info to database
-                ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
-                ManagementObjectCollection moc = mc.GetInstances();
-                if (moc.Count != 0)
-                {
-                    foreach (ManagementObject mo in mc.GetInstances())
-                    {
-                        string currentSystemInfo = "\nMachine Make: " + mo["Manufacturer"].ToString() + "\nMachine Model: " + mo["Model"].ToString() + "\nSystem Type: " +
-                            mo["SystemType"].ToString() + "\nHost Name: " + mo["DNSHostName"].ToString() + "\nLogon User Name: " + mo["UserName"].ToString() + "\n";
-                        Database.GetInstance().LogInfo(currentSystemInfo);
-                    }
-                }
+                //GetAndStoreSystemInfo();
+                //JavaHelper.GetAndStoreEnvironmentVariables();
 
                 // Check whether Java is available, copy LIUM jar file resource to executing location
                 if (!JavaHelper.IsJavaAvailable())
@@ -202,11 +193,19 @@ namespace AudioTracker
 
         public override void CreateDatabaseTablesIfNotExist()
         {
-            Queries.CreateAudioRecordingsTable();
+            string CreateAudioRecordingsTableString = DatabaseImplementation.GetCreateString(Settings.AUDIO_RECORDINGS_TABLE_NAME, Queries.AUDIO_RECORDINGS_COLUMN_NAMES);
+            var ResultAudioRecordingsCreation = Database.GetInstance().ExecuteDefaultQuery(CreateAudioRecordingsTableString);
             Queries.UpdateAllColumnsOfTable(Settings.AUDIO_RECORDINGS_TABLE_NAME, Queries.AUDIO_RECORDINGS_COLUMN_NAMES);
 
-            Queries.CreateAudioVolumeTable();
+            string CreateAudioVolumeTableString = DatabaseImplementation.GetCreateString(Settings.AUDIO_VOLUME_TABLE_NAME, Queries.AUDIO_VOLUME_COLUMN_NAMES);
+            var ResultAudioVolumeCreation = Database.GetInstance().ExecuteDefaultQuery(CreateAudioVolumeTableString);
             Queries.UpdateAllColumnsOfTable(Settings.AUDIO_VOLUME_TABLE_NAME, Queries.AUDIO_VOLUME_COLUMN_NAMES);
+
+            string CreateLiumAnalysisClusterTableString = DatabaseImplementation.GetCreateString(Settings.LIUM_ANALYSIS_CLUSTERS_TABLE_NAME, Queries.LIUM_ANALYSIS_CLUSTER_COLUMN_NAMES);
+            var ResultLiumAnalysisClusterCreation = Database.GetInstance().ExecuteDefaultQuery(CreateLiumAnalysisClusterTableString);
+
+            string CreateLiumAnalysisSegmentTableString = DatabaseImplementation.GetCreateString(Settings.LIUM_ANALYSIS_SEGMENTS_TABLE_NAME, Queries.LIUM_ANALYSIS_SEGMENT_COLUMN_NAMES);
+            var ResultLiumAnalysisSegmentCreation = Database.GetInstance().ExecuteDefaultQuery(CreateLiumAnalysisSegmentTableString);
         }
 
         public override void UpdateDatabaseTables(int version)
@@ -300,17 +299,34 @@ namespace AudioTracker
         private bool StartAudioRecording()
         {
             LastInputAudioDevice = Settings.InputAudioDevice;
-
             waveSource = new WaveIn(WaveCallbackInfo.FunctionCallback());
+
             try
             {
                 //TODO: check whether audio device has changed since startup
-                waveSource.DeviceNumber = (int)Settings.InputAudioDevice.DeviceNumber; //TODO: null check!
+
+                //TODO: check whether device has actually been set
+                /*
+                if (Settings.InputAudioDevice == null)
+                {
+                    Logger.WriteToConsole("No audio device has been selected. Automatically choosing device with number 0.");
+                    waveSource.DeviceNumber = 0;
+                    AudioDeviceHelper.SetPropertiesFromDeviceNumber(Settings.InputAudioDevice, 0);
+                    Database.GetInstance().LogInfo("AudioTracker: No audio device has been selected by the participant. Automatically set device.");
+                }
+                */
+                waveSource.DeviceNumber = (int)Settings.InputAudioDevice.DeviceNumber;
                 Database.GetInstance().LogInfo("AudioTracker: Audio input device number selected at start of recording: " + Settings.InputAudioDevice.DeviceNumber);
                 waveSource.WaveFormat = new WaveFormat(Settings.RecordingSampleRate, Settings.RecordingNumberOfChannels);
                 waveSource.BufferMilliseconds = Settings.AudioRecordingChunkLength;
                 waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
                 waveSource.RecordingStopped += new EventHandler<NAudio.Wave.StoppedEventArgs>(waveSource_RecordingStopped);
+                Database.GetInstance().LogInfo("AudioTracker: Information about the audio input device selected at start of recording: Device Number: " + 
+                    Settings.InputAudioDevice.DeviceNumber + "; Device Friendly Name: " + Settings.InputAudioDevice.DeviceFriendlyName + 
+                    "; Friendly Name: " + Settings.InputAudioDevice.FriendlyName + "; Device ID: " + Settings.InputAudioDevice.ID + 
+                    "; Manufacturer GUID: " + Settings.InputAudioDevice.ManufacturerGuid + "; Name GUID: " + Settings.InputAudioDevice.NameGuid + 
+                    "; Product GUID: " + Settings.InputAudioDevice.ProductGuid + "; Product Name: " + Settings.InputAudioDevice.ProductName + 
+                    "; Channels: " + Settings.InputAudioDevice.Channels);
                 startOfCurrentRecording = DateTime.Now;
                 waveSource.StartRecording();
 
@@ -365,8 +381,6 @@ namespace AudioTracker
                 AmplitudeData newAmplitudeData = newAmplitudeDataList.ToArray()[0];
                 bool isMicrophoneProbablyMuted = AmplitudeHelper.IsMicrophoneProbablyMuted(newAmplitudeData);
 
-                //Logger.WriteToConsole("Device name: " + inputAudioDevice.DeviceFriendlyName);  <- throws an exception
-                //Logger.WriteToConsole("Device mute: " + inputAudioDevice.AudioEndpointVolume.VolumeRange); // inputAudioDevice.AudioEndpointVolume.Mute.ToString()
                 int lengthOfRecording = (int)(1000 * waveFile.Length / waveFile.WaveFormat.AverageBytesPerSecond);
                 if (lengthOfRecording != Settings.AudioRecordingChunkLength)
                 {
@@ -398,9 +412,17 @@ namespace AudioTracker
                 }
 
                 // start analysis of new audio chunk
-                string outputFileName = "lium-" + fileNameDateTime + ".seg";
+                string outputFileName;
+                if (Settings.IsLiumSaveAllStep)
+                {
+                    outputFileName = "lium-" + fileNameDateTime + ".c.seg";
+                }
+                else
+                {
+                    outputFileName = "lium-" + fileNameDateTime + ".seg";
+                }
                 string outputFilePath = Shared.Settings.ExportFilePath + "\\" + outputFileName;
-                string liumConsoleOutput = liumAnalysis(audioFilename, outputFilePath);
+                string liumConsoleOutput = liumAnalysis(audioFilename, outputFilePath, startOfThisRecording);
 
                 //store audio recording meta data into database
                 AudioRecording newAudioRecording = new AudioRecording(startOfThisRecording, endOfThisRecording, audioFilenameMp3, outputFileName, liumConsoleOutput, 0, lengthOfRecording,
@@ -408,7 +430,8 @@ namespace AudioTracker
                 Queries.StoreAudioRecording(newAudioRecording);
 
                 //store amplitude data into database
-                //TODO: implement
+                List<AmplitudeData> NewAudioVolumeData = AmplitudeHelper.GetRelativeAmplitudeSegments(relativeAmplitudes, lengthOfRecording / 1000, startOfThisRecording, 1000.0 / 16000.0); // TODO: remove magic numbers
+                Queries.StoreAudioVolumeData(NewAudioVolumeData);
             }
             catch (Exception ex)
             {
@@ -447,7 +470,7 @@ namespace AudioTracker
         /// </summary>
         /// <param name="liumInputFilename"></param>
         /// <param name="liumOutputFilename"></param>
-        private string liumAnalysis(string liumInputFilename, string liumOutputFilename)
+        private string liumAnalysis(string LiumInputFilename, string LiumOutputFilename, DateTime StartTime)
         {
             string lium_output_std = null;
             string lium_output_err = null;
@@ -465,7 +488,15 @@ namespace AudioTracker
                 {
                     Process liumProcess = new Process();
                     liumProcess.StartInfo.FileName = @"java";
-                    string arguments = "-Xmx2024m -jar lium.jar --fInputMask=\"" + liumInputFilename + "\" --sOutputMask=\"" + liumOutputFilename + "\" --doCEClustering showName";
+                    string arguments;
+                    if (Settings.IsLiumSaveAllStep)
+                    {
+                        arguments = "-Xmx2024m -jar lium.jar --fInputMask=\"" + LiumInputFilename + "\" --sOutputMask=\"" + LiumOutputFilename + "\" --saveAllStep --doCEClustering showName";
+                    }
+                    else
+                    {
+                        arguments = "-Xmx2024m -jar lium.jar --fInputMask=\"" + LiumInputFilename + "\" --sOutputMask=\"" + LiumOutputFilename + "\" --doCEClustering showName";
+                    }
                     liumProcess.StartInfo.Arguments = arguments;
                     liumProcess.EnableRaisingEvents = true;
                     liumProcess.StartInfo.UseShellExecute = false;
@@ -536,11 +567,13 @@ namespace AudioTracker
             void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
             {
                 Logger.WriteToConsole("Worker completed.");
-                ParseLiumClustersFromFile(liumOutputFilename);
+                List<LiumCluster> NewLiumClusterSet = ParseLiumClustersFromFile(LiumOutputFilename, StartTime);
+                Logger.WriteToConsole("Lium clusters parsed: " + NewLiumClusterSet.Count);
+                Queries.StoreLiumAnalysisResult(NewLiumClusterSet, LiumOutputFilename);
 
-                if (File.Exists(@liumInputFilename))
+                if (File.Exists(@LiumInputFilename))
                 {
-                    File.Delete(@liumInputFilename);
+                    File.Delete(@LiumInputFilename);
                 }
                 else
                 {
@@ -563,36 +596,55 @@ namespace AudioTracker
             }
         }
 
-        private List<LiumCluster> ParseLiumClustersFromFile(string LiumInputFileName)
+        private List<LiumCluster> ParseLiumClustersFromFile(string LiumInputFileName, DateTime StartTime)
         {
-            const int LIUM_FEATURE_LENGTH = 10; // in milliseconds, i.e. 3000 features for a 30 seconds recording //TODO: move to settings or to model
-            List<LiumCluster> NewLiumClusterSet = new List<LiumCluster>();
-
-            StreamReader reader = File.OpenText(LiumInputFileName);
-            string line;
-            bool isNextLineClusterInfo = false;
-            while ((line = reader.ReadLine()) != null)
+            try
             {
-                if (line.Substring(0, 2) == ";;")
+                StreamReader reader = File.OpenText(LiumInputFileName);
+                string line;
+                List<LiumCluster> NewLiumClusterSet = new List<LiumCluster>();
+                List<LiumSegment> CurrentNewLiumSegmentSet = new List<LiumSegment>();
+                LiumCluster CurrentNewLiumCluster = null;
+                LiumSegment CurrentNewLiumSegment;
+
+                while ((line = reader.ReadLine()) != null)
                 {
-                    isNextLineClusterInfo = true;
+                    if (line.Substring(0, 2) == ";;")
+                    {
+                        Logger.WriteToConsole("Cluster: " + line);
+                        CurrentNewLiumCluster = new LiumCluster(line);
+                        if (CurrentNewLiumSegmentSet.Count > 0) // if it's not the very first line of the file
+                        {
+                            CurrentNewLiumCluster.SegmentSet = CurrentNewLiumSegmentSet;
+                            NewLiumClusterSet.Add(CurrentNewLiumCluster);
+                            CurrentNewLiumSegmentSet.Clear();
+                        }
+                    }
+                    else
+                    {
+                        Logger.WriteToConsole("Segment: " + line);
+                        CurrentNewLiumSegment = new LiumSegment(line, StartTime);
+                        //Logger.WriteToConsole(CurrentNewLiumSegment.ChannelNumber + " / " + CurrentNewLiumSegment.Environment + " / " + CurrentNewLiumSegment.LenghtInFeatures);
+                        CurrentNewLiumSegmentSet.Add(CurrentNewLiumSegment);
+                    }
                 }
-                if (isNextLineClusterInfo)
+                if (CurrentNewLiumCluster == null)
                 {
-                    //LiumCluster CurrentNewLiumCluster = new LiumCluster();
-                    Logger.WriteToConsole("Cluster: " + line);
-                    //NewLiumClusterSet.Add(CurrentNewLiumCluster);
+                    //TODO: can this happen?
+                    Logger.WriteToConsole("Error (?): empty cluster at end of parsing.");
                 }
                 else
                 {
-                    string[] SegmentProperties = line.Split(' ');
-                    LiumSegment NewLiumSegment = new LiumSegment(SegmentProperties);
-                    //CurrentNewLiumCluster.SegmentSet.Add(NewLiumSegment);
-                    Logger.WriteToConsole(NewLiumSegment.ToString());
+                    CurrentNewLiumCluster.SegmentSet = CurrentNewLiumSegmentSet;
+                    NewLiumClusterSet.Add(CurrentNewLiumCluster);
                 }
+                return NewLiumClusterSet;
             }
-            return null;
-            //return NewLiumClusterSet;
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+                return null;
+            }
         }
 
         static bool IsDiskFull(Exception ex)
@@ -600,6 +652,39 @@ namespace AudioTracker
             const int HR_ERROR_HANDLE_DISK_FULL = unchecked((int)0x80070027);
             const int HR_ERROR_DISK_FULL = unchecked((int)0x80070070);
             return ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL;
+        }
+
+        //TODO: move to Helpers
+        private static void GetAndStoreSystemInfo()
+        {
+            /*
+            try
+            {
+                ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
+                ManagementObjectCollection moc = mc.GetInstances();
+                if (moc.Count != 0)
+                {
+                    foreach (ManagementObject mo in mc.GetInstances())
+                    {
+                        string currentSystemInfo = "\nMachine Make: " + mo["Manufacturer"].ToString() + "\nMachine Model: " + mo["Model"].ToString() + "\nSystem Type: " +
+                            mo["SystemType"].ToString() + "\nHost Name: " + mo["DNSHostName"].ToString() + "\nLogon User Name: " + mo["UserName"].ToString();
+                        Database.GetInstance().LogInfo(currentSystemInfo);
+                    }
+                }
+
+                bool Is64BitSystem = Environment.Is64BitOperatingSystem;
+                bool Is64BitProcess = Environment.Is64BitProcess;
+                Database.GetInstance().LogInfo("Is 64 bit operating system: " + Is64BitSystem + ", Is 64 bit process: " + Is64BitProcess);
+
+                string ProgramFilesDirectory = Environment.GetEnvironmentVariable("ProgramFiles"); // "ProgramFiles (x86)"
+                string[] JavaSubdirectories = Directory.GetDirectories(ProgramFilesDirectory + "\\Java");
+                Database.GetInstance().LogInfo("Subdirectories of folder '" + ProgramFilesDirectory + "\\Java': " + string.Join("; ", JavaSubdirectories));
+            }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
+            */
         }
 
         internal void DeviceNotificationHandler(Message msg)

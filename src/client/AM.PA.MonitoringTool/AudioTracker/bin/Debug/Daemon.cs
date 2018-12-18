@@ -114,7 +114,8 @@ namespace AudioTracker
                 //checkAudioDeviceTimer.Start();
 
                 // Write system info to database
-                GetAndStoreSystemInfo();
+                //GetAndStoreSystemInfo();
+                //JavaHelper.GetAndStoreEnvironmentVariables();
 
                 // Check whether Java is available, copy LIUM jar file resource to executing location
                 if (!JavaHelper.IsJavaAvailable())
@@ -656,17 +657,34 @@ namespace AudioTracker
         //TODO: move to Helpers
         private static void GetAndStoreSystemInfo()
         {
-            ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
-            ManagementObjectCollection moc = mc.GetInstances();
-            if (moc.Count != 0)
+            /*
+            try
             {
-                foreach (ManagementObject mo in mc.GetInstances())
+                ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
+                ManagementObjectCollection moc = mc.GetInstances();
+                if (moc.Count != 0)
                 {
-                    string currentSystemInfo = "\nMachine Make: " + mo["Manufacturer"].ToString() + "\nMachine Model: " + mo["Model"].ToString() + "\nSystem Type: " +
-                        mo["SystemType"].ToString() + "\nHost Name: " + mo["DNSHostName"].ToString() + "\nLogon User Name: " + mo["UserName"].ToString();
-                    Database.GetInstance().LogInfo(currentSystemInfo);
+                    foreach (ManagementObject mo in mc.GetInstances())
+                    {
+                        string currentSystemInfo = "\nMachine Make: " + mo["Manufacturer"].ToString() + "\nMachine Model: " + mo["Model"].ToString() + "\nSystem Type: " +
+                            mo["SystemType"].ToString() + "\nHost Name: " + mo["DNSHostName"].ToString() + "\nLogon User Name: " + mo["UserName"].ToString();
+                        Database.GetInstance().LogInfo(currentSystemInfo);
+                    }
                 }
+
+                bool Is64BitSystem = Environment.Is64BitOperatingSystem;
+                bool Is64BitProcess = Environment.Is64BitProcess;
+                Database.GetInstance().LogInfo("Is 64 bit operating system: " + Is64BitSystem + ", Is 64 bit process: " + Is64BitProcess);
+
+                string ProgramFilesDirectory = Environment.GetEnvironmentVariable("ProgramFiles"); // "ProgramFiles (x86)"
+                string[] JavaSubdirectories = Directory.GetDirectories(ProgramFilesDirectory + "\\Java");
+                Database.GetInstance().LogInfo("Subdirectories of folder '" + ProgramFilesDirectory + "\\Java': " + string.Join("; ", JavaSubdirectories));
             }
+            catch (Exception e)
+            {
+                Logger.WriteToLogFile(e);
+            }
+            */
         }
 
         internal void DeviceNotificationHandler(Message msg)

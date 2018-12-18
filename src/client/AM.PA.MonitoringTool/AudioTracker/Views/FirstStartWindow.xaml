@@ -15,6 +15,9 @@
         </Grid.RowDefinitions>
 
         <StackPanel Margin="10" Grid.Row="1">
+            <TextBlock Name="JavaUnavailableMessage" TextWrapping="Wrap" Visibility="Collapsed" Foreground="Red" FontWeight="Bold" >
+                Error: Java seems not to be available on your system.
+            </TextBlock>
             <TextBlock TextWrapping="Wrap"><Run Text="Please make sure that the USB microphone is connected to your computer. Then click on 'Find Devices' and select the audio input device which should be used."/><Run Text=" Normally, this should be the device labelled &quot;USB PnP Sound Device&quot;."/><LineBreak/><Run/><LineBreak/><LineBreak/><LineBreak/></TextBlock>
             <Button x:Name="FindButton" Height="30" Click="FindDevices" Background="{x:Static paColors:Settings.RetrospectionColorBrush}" Foreground="White" Content="Find Devices"/>
             <StackPanel x:Name="AudioDeviceList" Grid.Row="3" Margin="10,10,0,0" Visibility="Collapsed">
