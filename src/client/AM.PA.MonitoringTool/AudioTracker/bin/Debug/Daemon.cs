@@ -315,6 +315,7 @@ namespace AudioTracker
                     Database.GetInstance().LogInfo("AudioTracker: No audio device has been selected by the participant. Automatically set device.");
                 }
                 */
+
                 waveSource.DeviceNumber = (int)Settings.InputAudioDevice.DeviceNumber;
                 Database.GetInstance().LogInfo("AudioTracker: Audio input device number selected at start of recording: " + Settings.InputAudioDevice.DeviceNumber);
                 waveSource.WaveFormat = new WaveFormat(Settings.RecordingSampleRate, Settings.RecordingNumberOfChannels);
@@ -567,9 +568,9 @@ namespace AudioTracker
             void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
             {
                 Logger.WriteToConsole("Worker completed.");
-                List<LiumCluster> NewLiumClusterSet = ParseLiumClustersFromFile(LiumOutputFilename, StartTime);
-                Logger.WriteToConsole("Lium clusters parsed: " + NewLiumClusterSet.Count);
-                Queries.StoreLiumAnalysisResult(NewLiumClusterSet, LiumOutputFilename);
+                //List<LiumCluster> NewLiumClusterSet = ParseLiumClustersFromFile(LiumOutputFilename, StartTime);
+                //Logger.WriteToConsole("Lium clusters parsed: " + NewLiumClusterSet.Count);
+                //Queries.StoreLiumAnalysisResult(NewLiumClusterSet, LiumOutputFilename);
 
                 if (File.Exists(@LiumInputFilename))
                 {
@@ -600,7 +601,7 @@ namespace AudioTracker
         {
             try
             {
-                StreamReader reader = File.OpenText(LiumInputFileName);
+                StreamReader reader = File.OpenText(@LiumInputFileName);
                 string line;
                 List<LiumCluster> NewLiumClusterSet = new List<LiumCluster>();
                 List<LiumSegment> CurrentNewLiumSegmentSet = new List<LiumSegment>();

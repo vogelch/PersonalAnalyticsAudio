@@ -66,16 +66,19 @@ namespace AudioTracker.Helpers
 
             try
             {
-                string EnvironmentUserProfile = Environment.GetEnvironmentVariable("USERPROFILE");
-                Logger.WriteToConsole("EnvironmentUserProfile: " + EnvironmentUserProfile);
+                //string EnvironmentUserProfile = Environment.GetEnvironmentVariable("USERPROFILE");
+                //Logger.WriteToConsole("EnvironmentUserProfile: " + EnvironmentUserProfile);
+
+                string EnvironmentJavaHome = Environment.GetEnvironmentVariable("JAVA_HOME");
+                Logger.WriteToConsole("EnvironmentJavaHome: " + EnvironmentJavaHome);
 
                 Process process = new Process();
                 string arguments = "-version" + " \"";
                 process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.FileName = @"java";
+                process.StartInfo.FileName = @EnvironmentJavaHome + @"\bin\java.exe";
                 process.StartInfo.Arguments = arguments;
-                process.StartInfo.WorkingDirectory = EnvironmentUserProfile;
+                //process.StartInfo.WorkingDirectory = EnvironmentUserProfile;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
@@ -122,6 +125,7 @@ namespace AudioTracker.Helpers
             return isAvailable;
         }
 
+        /*
         public static void GetAndStoreEnvironmentVariables()
         {
             try
@@ -168,7 +172,9 @@ namespace AudioTracker.Helpers
                 Logger.WriteToLogFile(ex);
             }
         }
+        */
 
+        /*
         public static Tuple<bool, string> IsJavaVersionWrong()
         {
             List<string> output = new List<string>();
@@ -234,7 +240,7 @@ namespace AudioTracker.Helpers
             }
 
         }
-
+        */
 
         public static void WriteResourceToFile(string resourceName, string fileName)
         {
